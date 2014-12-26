@@ -38,8 +38,8 @@ BaseHTML = """
             <div style="font: 10pt Times New Roman"><b>Auto-Generated Web Report</b></div><br>
             
             <table width=820 cellspacing=1 cellpadding=10 border=4>
-            <tr align=center><td colspan=2><b>Seq</b></td><td colspan=4><b>Heavy Chain</b></td><td colspan=4><b>Light Chain</b></td><td colspan=4><b>L1</b></td><td colspan=4><b>L2</b></td><td colspan=4><b>L3</b></td>
-                                                                                                     <td colspan=4><b>H1</b></td><td colspan=4><b>H2</b></td><td colspan=4><b>H3</b></td><td colspan=4><b>PTM Risk</b></td><td colspan=4><b>Aggregate Risk</b></td><td colspan=4><b>RAW Files</b></td></tr>
+            <tr align=center><td><b>Seq</b></td><td><b>Heavy Chain</b></td><td><b>Light Chain</b></td><td><b>L1</b></td><td ><b>L2</b></td><td><b>L3</b></td>
+                                                                                                     <td><b>H1</b></td><td><b>H2</b></td><td><b>H3</b></td><td><b>PTM Risk</b></td><td><b>Aggregate Risk</b></td><td><b>RAW Files</b></td></tr>
                                                                                        
             {OpenTable}
             </table>
@@ -79,8 +79,18 @@ SectionHTML = """
 """
 
 
-HTMLOpening = """<tr align=center><td colspan=2><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td colspan=4>{HeavyChain}</td><td colspan=4>{LightChain}</td><td colspan=4>{L1}</td><td colspan=4>{L2}</td><td colspan=4>{L3}</td>
-                                                                             <td colspan=4>{H1}</td><td colspan=4>{H2}</td><td colspan=4>{H3}</td></td><td colspan=4><font color = "#FF0000">{HPTMRisk}</font><br><font color = "#EEAD0E">{MPTMRisk}</font></br></td></td><td colspan=4><font color = "#FF0000">{HighAgg}  </font><font color="#EEAD0E">{MedAgg}  </font><font color="#00FF00">{LowAgg}</font></td><td><a href="{PTMSRC}">PTM</a><br><a href="{HYDSRC}">HYDR</a></br><a href="{PDBSRC}">PDB</a></td></tr>
+HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
+
+<tr>
+<td >{L1}</td><td >{L2}</td><td >{L3}</td>
+<td >{H1}</td><td >{H2}</td><td >{H3}</td></td><td rowspan=2><font color = "#FF0000">{HPTMRisk}</font><br><font color = "#EEAD0E">{MPTMRisk}</font></br></td></td>
+<td rowspan=2><font color = "#FF0000">{HighAgg}  </font><font color="#EEAD0E">{MedAgg}  </font><font color="#00FF00">{LowAgg}</font></td><td rowspan=2><a href="{PTMSRC}">PTM</a><br><a href="{HYDSRC}">HYDR</a></br><a href="{PDBSRC}">PDB</a></td>
+</tr>
+
+<tr>
+<td >{L1}</td><td >{L2}</td><td >{L3}</td>
+<td >{H1}</td><td >{H2}</td><td >{H3}</td></td></td>
+</tr>
 """
 
 PTMSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{PTMype}</td><td>{CDRLabel}</td><td>{Motif}</td><td>{Residue}</td><td>{SASA}</td><td>{PSASA}</td><td>{Neigh}</td><td>{HalfLife}</td><td>{Risk}</td></tr>
@@ -94,7 +104,6 @@ def getSequences():
     Seq_Dict = {}
     FilePattern = re.compile("""seq_(\d+)_(.+)_hc_(.+)_lc\.fst""")
     for x in glob.glob(FolderPATH+"*lc.fst"):
-        print("glob is "+x)
         matched = re.search(FilePattern, x)
         if matched:
             SeqNum = int(matched.group(1))
@@ -269,8 +278,8 @@ if FolderPATH == "":
     dirname = dirnamelst[-1]
 else:
     dirname = FolderPATH
-    dirnamelst = dirname.split("\\")
-    dirname = dirnamelst[-1]
+    dirnamelst = dirname.split("/")
+    dirname = dirnamelst[-2]
     
 TablesFinal = makeHTML()
 Base = BaseHTML
