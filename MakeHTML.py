@@ -5,6 +5,7 @@ import re
 
 #Path to folder with the files, relative to where the python file is
 #Leave blank if python file is in same place
+#End the path with a '/'
 FolderPATH = "../output_m71derived_togo/output_m71derived_togo/"
 #Name of HTML File
 FinalFileName = "Web-Report.html"
@@ -82,14 +83,14 @@ SectionHTML = """
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
 
 <tr>
-<td >{L1}</td><td >{L2}</td><td >{L3}</td>
-<td >{H1}</td><td >{H2}</td><td >{H3}</td></td><td rowspan=2><font color = "#FF0000">{HPTMRisk}</font><br><font color = "#EEAD0E">{MPTMRisk}</font></br></td></td>
+<td bgcolor="#9F8170">{PTML1}</td><td bgcolor="#9F8170">{PTML2}</td><td bgcolor="#9F8170">{PTML3}</td>
+<td bgcolor="#9F8170">{PTMH1}</td><td bgcolor="#9F8170">{PTMH2}</td><td bgcolor="#9F8170">{PTMH3}</td></td><td rowspan=2><font color = "#FF0000">{HPTMRisk}</font><br><font color = "#EEAD0E">{MPTMRisk}</font></br></td></td>
 <td rowspan=2><font color = "#FF0000">{HighAgg}  </font><font color="#EEAD0E">{MedAgg}  </font><font color="#00FF00">{LowAgg}</font></td><td rowspan=2><a href="{PTMSRC}">PTM</a><br><a href="{HYDSRC}">HYDR</a></br><a href="{PDBSRC}">PDB</a></td>
 </tr>
 
 <tr>
-<td >{L1}</td><td >{L2}</td><td >{L3}</td>
-<td >{H1}</td><td >{H2}</td><td >{H3}</td></td></td>
+<td bgcolor="#4E82b4">{HYDL1}</td><td bgcolor="#4E82b4">{HYDL2}</td><td bgcolor="#4E82b4">{HYDL3}</td>
+<td bgcolor="#4E82b4">{HYDH1}</td><td bgcolor="#4E82b4">{HYDH2}</td><td bgcolor="#4E82b4">{HYDH3}</td>
 </tr>
 """
 
@@ -135,10 +136,14 @@ def getCDR(fileName):
     
     CDRs = {"H1":H1, "H1":H1, "H2":H2, "H3":H3, "L1":L1, "L2":L2, "L3":L3}
     file.close
+    #Returns a dictionary with all CDRs
     return CDRs
    
 def getPTMSummary(fileName):
-    PTMPattern = re.compile("""-*PTM\s*SUMMARY-*\nPTMTYPE\s*CDRLabel\s*MOTIF\s*RESIDUE\s*SASA\s*%SASA\s*#Neighbors\s*Half Life\s*RISK \n-*\n((.*\n)*)""")
+    """Gets the PTM summary"""
+    """Returns a 2d list with outer list holding all the row, and inner list holds the row data"""
+
+    PTMPattern = re.compile("""-*PTM\s*SUMMARY-*\nPTMTYPE\s*CDRLabel\s*MOTIF\s*RESIDUE\s*SASA\s*%SASA\s*#Neighbors\s*Half Life\s*RISK \n-*\n((?:.*\n)*)""")
     file = open(fileName, "r")
     data = file.read()
     chunk = re.search(PTMPattern, data)
@@ -156,6 +161,9 @@ def getPTMSummary(fileName):
     return LIST
     
 def getHYDSummary(fileName):
+    """Gets the HYD summary"""
+    """Returns a 2d list with outer list holding all the row, and inner list holds the row data"""
+
     HYDPattern = re.compile("""-*HYDROPHOBIC PATCH SUMMARY-*\nRISK\s*NUMBER\s*SAP_AREA\s*SASA\s*%SASA\s*HYD_RES_SASA\s*HYD_RESIDUES\s*-*((.*\n)*)""")
     file = open(fileName, "r")
     data = file.read()
@@ -174,6 +182,7 @@ def getHYDSummary(fileName):
     return LIST
     
 def makeString(num):
+    """Turns the sequence number into a string and adds zeros"""
     num = str(num)
     if len(num) == 1:
         num = "000" + num
@@ -184,20 +193,42 @@ def makeString(num):
     elif len(num) == 4:
         num = "" + num
     return num
+    
+def highlightLetter(str, indexDict):
+    htmlColor = '<font color="{Color}">{Letter}</font>'
+    newStrlst = []
+    for x in range(len(str)):
+        if x in indexDict:
+            newHTML = htmlColor.format(Color = indexDict[x], Letter = str[x])
+            newStrlst.append(newHTML)
+        else:
+            newStrlst.append(str[x])
+    newStr = "".join(newStrlst)
+    return newStr
 
 def saveHTML(strToSave, strNameOfFile):
+    """Writes the strToSave to a file"""
     file = open(strNameOfFile, "w")
     file.write(strToSave)
     file.close
     
+def highlightPTM(CDRsDict):
+    lstRange = CDRsDict["H3"][0].split(" - ")
+    print(lstRange)
+    
 def makeHTML():
+    #Gets the number and HC, LC data of all the sequences
     Sequences = getSequences()
+    #Lists for appending html data
     Tables = []
     Sections = []
+    
+    #Iterates over all the sequences
     for SeqNum in range(len(Sequences)):
         SeqNum = SeqNum+1
         StringSeqNum = makeString(SeqNum)
         Open = HTMLOpening
+        #Gets the cdrs from the hydr file
         CDRName = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_hydr.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
         CDRs = getCDR(CDRName)
         
@@ -208,13 +239,15 @@ def makeHTML():
         MEHYDPatchNum = 0
         LOHYDPatchNum = 0
         
-        
         PTMSum = getPTMSummary(FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_ptm.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"]))
         PTMHTMLs = []
+        HighlightPTMlst = []
         for row in PTMSum:
             PTMrawHTML = PTMSummaryHTML
+            #If statement sets the color depending on the risk column
             if row[8] == 'hi':
                 riskColor="#FF0000"
+                #Nested if appends the risktype to a list if its not already in the list
                 if row[0] in HPTMRiskTypes:
                     pass
                 else:
@@ -223,48 +256,186 @@ def makeHTML():
                 riskColor="#00FF00"
             else:
                 riskColor="#EEAD0E"
+                #Nested if appends the risktype to a list if its not already in the list
                 if row[0] in MPTMRiskTypes:
                     pass
                 else:
                     MPTMRiskTypes.append(row[0])
+                    
+            ResNum = int(re.sub('[^\d]', '', row[3]))
+            HighlightPTMlst.append([ResNum, row[1], riskColor])
+                    
+            #Formats the PTM Table Row html with data
             PTMrawHTML = PTMrawHTML.format(Color=riskColor, PTMype=row[0], CDRLabel=row[1], Motif=row[2], Residue=row[3], SASA=row[4], PSASA=row[5], Neigh=row[6], HalfLife=row[7], Risk=row[8])
             PTMHTMLs.append(PTMrawHTML)
+        #Joins all the PTM Table Rows together
         PTMHTML = "\n".join(PTMHTMLs)
+        
+        PTM_H1_dict = dict()
+        PTM_H2_dict = dict()
+        PTM_H3_dict = dict()
+        PTM_L1_dict = dict()
+        PTM_L2_dict = dict()
+        PTM_L3_dict = dict()
+        
+        for t in HighlightPTMlst:
+            t[1] = re.sub('CDR_', '', t[1])
+            lstRange = CDRs[t[1]][0].split(" - ")
+            t[0] = t[0] - int(lstRange[0])
+            
+            if t[1] == "H1":
+                PTM_H1_dict[t[0]] = t[2]
+            elif t[1] == "H2":
+                PTM_H2_dict[t[0]] = t[2]
+            elif t[1] == "H3":
+                PTM_H3_dict[t[0]] = t[2]
+            elif t[1] == "L1":
+                PTM_L1_dict[t[0]] = t[2]
+            elif t[1] == "L2":
+                PTM_L2_dict[t[0]] = t[2]
+            elif t[1] == "L3":
+                PTM_L3_dict[t[0]] = t[2]
+            
+        
+        #Highlights the correct CDRs
+        PTM_H1 = highlightLetter(CDRs["H1"][1], PTM_H1_dict)
+        PTM_H2 = highlightLetter(CDRs["H2"][1], PTM_H2_dict)
+        PTM_H3 = highlightLetter(CDRs["H3"][1], PTM_H3_dict)
+        PTM_L1 = highlightLetter(CDRs["L1"][1], PTM_L1_dict)
+        PTM_L2 = highlightLetter(CDRs["L2"][1], PTM_L2_dict)
+        PTM_L3 = highlightLetter(CDRs["L3"][1], PTM_L3_dict)
+        
+        
+        #Joins the risktypes together with a \n
         HPTMRiskType = "\n".join(HPTMRiskTypes)
         MPTMRiskType = "\n".join(MPTMRiskTypes)
         
         HYDSum = getHYDSummary(FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_hydr.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"]))
         HYDHTMLs = []
+        HighlightHYDlst = []
         for row in HYDSum:
             HYDrawHTML = HYDSummaryHTML
+            #If statement sets the color depending on the risk column
             if row[0] == 'hi':
                 riskColor="#FF0000"
+                #Increases the hi risk counter by 1
                 HIHYDPatchNum = HIHYDPatchNum + 1
             elif row[0] == 'low':
                 riskColor="#00FF00"
+                #Increases the low risk counter by 1
                 LOHYDPatchNum = LOHYDPatchNum + 1
             else:
                 riskColor="#EEAD0E"
+                #Increases the med risk counter by 1
                 MEHYDPatchNum = MEHYDPatchNum + 1
+                
+            resdisues = row[6].split()
+            
+            
+            H1_Range = CDRs["H1"][0].split(" - ")
+            H2_Range = CDRs["H2"][0].split(" - ")
+            H3_Range = CDRs["H3"][0].split(" - ")
+            L1_Range = CDRs["L1"][0].split(" - ")
+            L2_Range = CDRs["L2"][0].split(" - ")
+            L3_Range = CDRs["L3"][0].split(" - ")
+            for residue in resdisues:
+                ResNum = int(re.sub('[^\d]', '', residue))
+                ResType = residue.split(".")[0]
+                if ResType == "h":
+                    if ResNum >= int(H1_Range[0]) and ResNum <= int(H1_Range[1]):
+                        ResNum = ResNum - int(H1_Range[0])
+                        HighlightHYDlst.append([ResNum, "H1", riskColor])
+                    elif ResNum >= int(H2_Range[0]) and ResNum <= int(H2_Range[1]):
+                        ResNum = ResNum - int(H2_Range[0])
+                        HighlightHYDlst.append([ResNum, "H2", riskColor])
+                    elif ResNum >= int(H3_Range[0]) and ResNum <= int(H3_Range[1]):
+                        ResNum = ResNum - int(H3_Range[0])
+                        HighlightHYDlst.append([ResNum, "H3", riskColor])
+                    else:
+                        print("Out of Range",ResType,ResNum)
+                elif ResType == "l":
+                    if ResNum >= int(L1_Range[0]) and ResNum <= int(L1_Range[1]):
+                        ResNum = ResNum - int(L1_Range[0])
+                        HighlightHYDlst.append([ResNum, "L1", riskColor])
+                    elif ResNum >= int(L2_Range[0]) and ResNum <= int(L2_Range[1]):
+                        ResNum = ResNum - int(L2_Range[0])
+                        HighlightHYDlst.append([ResNum, "L2", riskColor])
+                    elif ResNum >= int(L3_Range[0]) and ResNum <= int(L3_Range[1]):
+                        ResNum = ResNum - int(L3_Range[0])
+                        HighlightHYDlst.append([ResNum, "L3", riskColor])
+                    else:
+                        print("Out of Range",ResType,ResNum)
+                
+            #Formats the HYD Table Row html with data
             HYDrawHTML = HYDrawHTML.format(Color=riskColor, Risk=row[0], Num=row[1], SAP_AREA=row[2], SASA=row[3], PSASA=row[4], HYD_RES_SASA=row[5], HYD_RESIDUES=row[6])
             HYDHTMLs.append(HYDrawHTML)
+            
+        HYD_H1_dict = dict()
+        HYD_H2_dict = dict()
+        HYD_H3_dict = dict()
+        HYD_L1_dict = dict()
+        HYD_L2_dict = dict()
+        HYD_L3_dict = dict()
+        
+        
+        for t in HighlightHYDlst:           
+            if t[1] == "H1":
+                HYD_H1_dict[t[0]] = t[2]
+            elif t[1] == "H2":
+                HYD_H2_dict[t[0]] = t[2]
+            elif t[1] == "H3":
+                HYD_H3_dict[t[0]] = t[2]
+            elif t[1] == "L1":
+                HYD_L1_dict[t[0]] = t[2]
+            elif t[1] == "L2":
+                HYD_L2_dict[t[0]] = t[2]
+            elif t[1] == "L3":
+                HYD_L3_dict[t[0]] = t[2]
+            
+        
+        #Highlights the correct CDRs
+        HYD_H1 = highlightLetter(CDRs["H1"][1], HYD_H1_dict)
+        HYD_H2 = highlightLetter(CDRs["H2"][1], HYD_H2_dict)
+        HYD_H3 = highlightLetter(CDRs["H3"][1], HYD_H3_dict)
+        HYD_L1 = highlightLetter(CDRs["L1"][1], HYD_L1_dict)
+        HYD_L2 = highlightLetter(CDRs["L2"][1], HYD_L2_dict)
+        HYD_L3 = highlightLetter(CDRs["L3"][1], HYD_L3_dict)
+            
+        #Joins all the HYD Table Rows together
         HYDHTML = "\n".join(HYDHTMLs)
         
         
-        Section = SectionHTML
+        #Creates path for images
         i1 = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_ptm.png".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
         i2 = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_sap.png".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
-        Section = Section.format(SeqNum=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"], PTMTable=PTMHTML, HYDTable=HYDHTML, img1=i1, img2=i2)
+        
+        #Formats section html with data
+        Section = SectionHTML
+        Section = Section.format(SeqNum=StringSeqNum, HC=Sequences[SeqNum]["HC"], 
+                                 LC=Sequences[SeqNum]["LC"], PTMTable=PTMHTML, 
+                                 HYDTable=HYDHTML, img1=i1, img2=i2)
+        
+        #Appends this section to a list
         Sections.append(Section)
         
+        #Creates paths for raw files
         ptmSRC = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_ptm.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
         hydSRC = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_hydr.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
         pdbSRC = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_.pdb".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
         
-        Open = Open.format(SeqNum=StringSeqNum, DispSeqNum=StringSeqNum, HeavyChain=Sequences[SeqNum]["HC"], LightChain=Sequences[SeqNum]["LC"], H1=CDRs["H1"][1], H2=CDRs["H2"][1], H3=CDRs["H3"][1], L1=CDRs["L1"][1], L2=CDRs["L2"][1], L3=CDRs["L3"][1], HPTMRisk=HPTMRiskType, MPTMRisk=MPTMRiskType, HighAgg=HIHYDPatchNum, MedAgg=MEHYDPatchNum, LowAgg=LOHYDPatchNum, PTMSRC=ptmSRC, HYDSRC=hydSRC, PDBSRC=pdbSRC)
+        Open = Open.format(SeqNum=StringSeqNum, DispSeqNum=StringSeqNum, 
+                           HeavyChain=Sequences[SeqNum]["HC"], LightChain=Sequences[SeqNum]["LC"], 
+                           PTMH1=PTM_H1, PTMH2=PTM_H2, PTMH3=PTM_H3, 
+                           PTML1=PTM_L1, PTML2=PTM_L2, PTML3=PTM_L3,
+                           HYDH1=HYD_H1, HYDH2=HYD_H2, HYDH3=HYD_H3, 
+                           HYDL1=HYD_L1, HYDL2=HYD_L2, HYDL3=HYD_L3,
+                           HPTMRisk=HPTMRiskType, MPTMRisk=MPTMRiskType,
+                           HighAgg=HIHYDPatchNum, MedAgg=MEHYDPatchNum, LowAgg=LOHYDPatchNum, PTMSRC=ptmSRC, 
+                           HYDSRC=hydSRC, PDBSRC=pdbSRC)
         Tables.append(Open)
         
             
+    #Joins the list into a string with a newline character between them
     Section = "\n".join(Sections)
     Table = "\n".join(Tables)
     return [Table, Section]
