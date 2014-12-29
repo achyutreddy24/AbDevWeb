@@ -6,7 +6,8 @@ import re
 #Path to folder with the files, relative to where the python file is
 #Leave blank if python file is in same place
 #End the path with a '/'
-FolderPATH = "../output_m71derived_togo/output_m71derived_togo/"
+FolderPATH = "../output_ama1_togo/output_ama1_togo/" #"../output_m71derived_togo/output_m71derived_togo/"
+
 #Name of HTML File
 FinalFileName = "Web-Report.html"
 
@@ -39,7 +40,7 @@ BaseHTML = """
             <div style="font: 10pt Times New Roman"><b>Auto-Generated Web Report</b></div><br>
             
             <table width=820 cellspacing=1 cellpadding=10 border=4>
-            <tr align=center><td><b>Seq</b></td><td><b>Heavy Chain</b></td><td><b>Light Chain</b></td><td><b>L1</b></td><td ><b>L2</b></td><td><b>L3</b></td>
+            <tr align=center><td><b>Seq</b></td><td><b>Chain 1</b></td><td><b>Chain 2</b></td><td><b>L1</b></td><td ><b>L2</b></td><td><b>L3</b></td>
                                                                                                      <td><b>H1</b></td><td><b>H2</b></td><td><b>H3</b></td><td><b>PTM Risk</b></td><td><b>Aggregate Risk</b></td><td><b>RAW Files</b></td></tr>
                                                                                        
             {OpenTable}
@@ -53,7 +54,7 @@ BaseHTML = """
 
 SectionHTML = """
 <section>
-            <h1 align=center style="font: 20pt Times New Roman"><A NAME="Seq{SeqNum}"><b>Sequence {SeqNum} - {HC}_hc - {LC}_lc</b></h1></A>
+            <h1 align=center style="font: 20pt Times New Roman"><A NAME="Seq{SeqNum}"><b>Sequence {SeqNum} - {FirstChain} - {SecondChain}</b></h1></A>
             <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Post Translational Modifications</b></h2>
             
             <table align=center width=820 cellspacing=2 cellpadding=4 border=0>
@@ -100,19 +101,19 @@ PTMSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{PTMype}</td><td>{CD
 HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>1{Num}</td><td>{SAP_AREA}</td><td>{SASA}</td><td>{PSASA}</td><td>{HYD_RES_SASA}</td><td>{HYD_RESIDUES}</td></tr>
 """
 
-#Gets sequences and HC and LC name from all .fst files
+#Gets sequences and FirstChain and SecondChain name from all .fst files
 def getSequences():
     Seq_Dict = {}
-    FilePattern = re.compile("""seq_(\d+)_(.+)_hc_(.+)_lc\.fst""")
-    for x in glob.glob(FolderPATH+"*lc.fst"):
+    FilePattern = re.compile("""seq_(\d+)_((?:.+?)[_|\.](?:.+?))_((?:.+?)[_|\.](?:.+?))_ptm\.txt""")
+    for x in glob.glob(FolderPATH+"*_ptm.txt"):
         matched = re.search(FilePattern, x)
         if matched:
             SeqNum = int(matched.group(1))
-            HCNAME = matched.group(2)
-            LCNAME = matched.group(3)
+            FirstChainNAME = matched.group(2)
+            SecondChainNAME = matched.group(3)
             name = dict()
-            name["HC"] = HCNAME
-            name["LC"] = LCNAME
+            name["FirstChain"] = FirstChainNAME
+            name["SecondChain"] = SecondChainNAME
             Seq_Dict[SeqNum] = name
         else:
             pass
@@ -195,11 +196,11 @@ def makeString(num):
     return num
     
 def highlightLetter(str, indexDict):
-    htmlColor = '<font color="{Color}">{Letter}</font>'
+    htmSecondChainolor = '<font color="{Color}">{Letter}</font>'
     newStrlst = []
     for x in range(len(str)):
         if x in indexDict:
-            newHTML = htmlColor.format(Color = indexDict[x], Letter = str[x])
+            newHTML = htmSecondChainolor.format(Color = indexDict[x], Letter = str[x])
             newStrlst.append(newHTML)
         else:
             newStrlst.append(str[x])
@@ -217,7 +218,7 @@ def highlightPTM(CDRsDict):
     print(lstRange)
     
 def makeHTML():
-    #Gets the number and HC, LC data of all the sequences
+    #Gets the number and FirstChain, SecondChain data of all the sequences
     Sequences = getSequences()
     #Lists for appending html data
     Tables = []
@@ -229,8 +230,13 @@ def makeHTML():
         StringSeqNum = makeString(SeqNum)
         Open = HTMLOpening
         #Gets the cdrs from the hydr file
-        CDRName = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_hydr.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
-        CDRs = getCDR(CDRName)
+        print("Seq TEst",Sequences[SeqNum]["FirstChain"],Sequences[SeqNum]["SecondChain"])
+        CDRName = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+        
+        try:
+            CDRs = getCDR(CDRName)
+        except:
+            continue
         
         #These variables are for risk counters in first table
         HPTMRiskTypes = []
@@ -239,7 +245,7 @@ def makeHTML():
         MEHYDPatchNum = 0
         LOHYDPatchNum = 0
         
-        PTMSum = getPTMSummary(FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_ptm.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"]))
+        PTMSum = getPTMSummary(FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"]))
         PTMHTMLs = []
         HighlightPTMlst = []
         for row in PTMSum:
@@ -310,7 +316,7 @@ def makeHTML():
         HPTMRiskType = "\n".join(HPTMRiskTypes)
         MPTMRiskType = "\n".join(MPTMRiskTypes)
         
-        HYDSum = getHYDSummary(FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_hydr.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"]))
+        HYDSum = getHYDSummary(FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"]))
         HYDHTMLs = []
         HighlightHYDlst = []
         for row in HYDSum:
@@ -406,25 +412,25 @@ def makeHTML():
         
         
         #Creates path for images
-        i1 = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_ptm.png".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
-        i2 = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_sap.png".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
+        i1 = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.png".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+        i2 = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_sap.png".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         
         #Formats section html with data
         Section = SectionHTML
-        Section = Section.format(SeqNum=StringSeqNum, HC=Sequences[SeqNum]["HC"], 
-                                 LC=Sequences[SeqNum]["LC"], PTMTable=PTMHTML, 
+        Section = Section.format(SeqNum=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], 
+                                 SecondChain=Sequences[SeqNum]["SecondChain"], PTMTable=PTMHTML, 
                                  HYDTable=HYDHTML, img1=i1, img2=i2)
         
         #Appends this section to a list
         Sections.append(Section)
         
         #Creates paths for raw files
-        ptmSRC = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_ptm.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
-        hydSRC = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_hydr.txt".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
-        pdbSRC = FolderPATH+"seq_{Num}_{HC}_hc_{LC}_lc_.pdb".format(Num=StringSeqNum, HC=Sequences[SeqNum]["HC"], LC=Sequences[SeqNum]["LC"])
+        ptmSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+        hydSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+        pdbSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_.pdb".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         
         Open = Open.format(SeqNum=StringSeqNum, DispSeqNum=StringSeqNum, 
-                           HeavyChain=Sequences[SeqNum]["HC"], LightChain=Sequences[SeqNum]["LC"], 
+                           HeavyChain=Sequences[SeqNum]["FirstChain"], LightChain=Sequences[SeqNum]["SecondChain"], 
                            PTMH1=PTM_H1, PTMH2=PTM_H2, PTMH3=PTM_H3, 
                            PTML1=PTM_L1, PTML2=PTM_L2, PTML3=PTM_L3,
                            HYDH1=HYD_H1, HYDH2=HYD_H2, HYDH3=HYD_H3, 
