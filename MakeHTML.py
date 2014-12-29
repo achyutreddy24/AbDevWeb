@@ -14,7 +14,9 @@ args = parser.parse_args()
 #Path to folder with the files, relative to where the python file is
 #Leave blank if python file is in same place
 #End the path with a '/'
-FolderPATH = args.path  #"../output_ama1_togo/output_ama1_togo/" #"../output_m71derived_togo/output_m71derived_togo/"
+FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
+FolderPATH = "../output_ama1_togo/output_ama1_togo/"
+
 
 #Name of HTML File
 FinalFileName = args.output
@@ -249,7 +251,8 @@ def makeHTML():
         
         try:
             CDRs = getCDR(CDRName)
-        except:
+        except Exception as e:
+            vPrint("Error reading CDRs, continuing")
             continue
         
         #These variables are for risk counters in first table
@@ -372,7 +375,7 @@ def makeHTML():
                         ResNum = ResNum - int(H3_Range[0])
                         HighlightHYDlst.append([ResNum, "H3", riskColor])
                     else:
-                        vPrint("Non CDR Residue"+" "+ResType+" "+ResNum)
+                        vPrint("Non CDR Residue"+" "+ResType+" "+str(ResNum))
                 elif ResType == "l":
                     if ResNum >= int(L1_Range[0]) and ResNum <= int(L1_Range[1]):
                         ResNum = ResNum - int(L1_Range[0])
@@ -384,7 +387,7 @@ def makeHTML():
                         ResNum = ResNum - int(L3_Range[0])
                         HighlightHYDlst.append([ResNum, "L3", riskColor])
                     else:
-                        vPrint("Non CDR Residue"+" "+ResType+" "+ResNum)
+                        vPrint("Non CDR Residue"+" "+ResType+" "+str(ResNum))
                 
             #Formats the HYD Table Row html with data
             HYDrawHTML = HYDrawHTML.format(Color=riskColor, Risk=row[0], Num=row[1], SAP_AREA=row[2], SASA=row[3], PSASA=row[4], HYD_RES_SASA=row[5], HYD_RESIDUES=row[6])
