@@ -444,7 +444,7 @@ def makeHTML():
         #Creates paths for raw files
         ptmSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         hydSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
-        pdbSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_.pdb".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+        pdbSRC = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}.pdb".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         
         Open = Open.format(SeqNum=StringSeqNum, DispSeqNum=StringSeqNum, 
                            HeavyChain=Sequences[SeqNum]["FirstChain"], LightChain=Sequences[SeqNum]["SecondChain"], 
