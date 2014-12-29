@@ -1,15 +1,32 @@
 import glob
 import os
 import re
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+parser.add_argument("-p", "--path", help="Path to folder with reports, (change '\\' to '/') end the string with a '/' \n leave blank for root directory", default="")
+parser.add_argument("-o", "--output", help="Name of output html file, leave blank for default", default="Web-Report.html")
+args = parser.parse_args()
 
 
 #Path to folder with the files, relative to where the python file is
 #Leave blank if python file is in same place
 #End the path with a '/'
-FolderPATH = "../output_ama1_togo/output_ama1_togo/" #"../output_m71derived_togo/output_m71derived_togo/"
+FolderPATH = args.path  #"../output_ama1_togo/output_ama1_togo/" #"../output_m71derived_togo/output_m71derived_togo/"
 
 #Name of HTML File
-FinalFileName = "Web-Report.html"
+FinalFileName = args.output
+
+
+verbose = args.verbose
+def vPrint(str):
+    if verbose == True:
+        print(str)
+    else:
+        pass
+
 
 #Here is how the following 5 html strings work
 #1. The PTMSummaryHTML is filled out for one row, then appended to a string. This happens for each row in the table
@@ -213,9 +230,6 @@ def saveHTML(strToSave, strNameOfFile):
     file.write(strToSave)
     file.close
     
-def highlightPTM(CDRsDict):
-    lstRange = CDRsDict["H3"][0].split(" - ")
-    print(lstRange)
     
 def makeHTML():
     #Gets the number and FirstChain, SecondChain data of all the sequences
@@ -230,7 +244,7 @@ def makeHTML():
         StringSeqNum = makeString(SeqNum)
         Open = HTMLOpening
         #Gets the cdrs from the hydr file
-        print("Seq TEst",Sequences[SeqNum]["FirstChain"],Sequences[SeqNum]["SecondChain"])
+        vPrint("Sequence info"+" "+Sequences[SeqNum]["FirstChain"]+" "+Sequences[SeqNum]["SecondChain"])
         CDRName = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         
         try:
@@ -358,7 +372,7 @@ def makeHTML():
                         ResNum = ResNum - int(H3_Range[0])
                         HighlightHYDlst.append([ResNum, "H3", riskColor])
                     else:
-                        print("Out of Range",ResType,ResNum)
+                        vPrint("Non CDR Residue"+" "+ResType+" "+ResNum)
                 elif ResType == "l":
                     if ResNum >= int(L1_Range[0]) and ResNum <= int(L1_Range[1]):
                         ResNum = ResNum - int(L1_Range[0])
@@ -370,7 +384,7 @@ def makeHTML():
                         ResNum = ResNum - int(L3_Range[0])
                         HighlightHYDlst.append([ResNum, "L3", riskColor])
                     else:
-                        print("Out of Range",ResType,ResNum)
+                        vPrint("Non CDR Residue"+" "+ResType+" "+ResNum)
                 
             #Formats the HYD Table Row html with data
             HYDrawHTML = HYDrawHTML.format(Color=riskColor, Risk=row[0], Num=row[1], SAP_AREA=row[2], SASA=row[3], PSASA=row[4], HYD_RES_SASA=row[5], HYD_RESIDUES=row[6])
