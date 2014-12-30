@@ -94,6 +94,7 @@ SectionHTML = """
             
             <img height=300 align=center src="{img2}" border=0>
 
+    <hr> 
 
 </section>
 
