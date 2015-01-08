@@ -124,7 +124,7 @@ HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>1{Num
 #Gets sequences and FirstChain and SecondChain name from all .fst files
 def getSequences():
     Seq_Dict = {}
-    FilePattern = re.compile("""seq_(\d+)_((?:.+?)[_|\.](?:.+?))_((?:.+?)[_|\.](?:.+?))_ptm\.txt""")
+    FilePattern = re.compile("""seq_(\d+)_((?:.+?)[_|\.]?(?:.+?))_((?:.+?)[_|\.]?(?:.+?))_ptm\.txt""")
     for x in glob.glob(FolderPATH+"*_ptm.txt"):
         matched = re.search(FilePattern, x)
         if matched:
