@@ -124,13 +124,17 @@ HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>1{Num
 #Gets sequences and FirstChain and SecondChain name from all .fst files
 def getSequences():
     Seq_Dict = {}
-    FilePattern = re.compile("""seq_(\d+)_((?:.+?)[_|\.]?(?:.+?))_((?:.+?)[_|\.]?(?:.+?))_ptm\.txt""")
-    for x in glob.glob(FolderPATH+"*_ptm.txt"):
+    FilePattern = re.compile("""seq_(\d+).*\.fst""")
+    FstPattern = re.compile(""">\s*(.*)\n[\s\S]*\n>\s*(.*)""")
+    for x in glob.glob(FolderPATH+"*.fst"):
+        file = open(x, "r")
+        data = file.read()
+        reg = re.search(FstPattern, data)
         matched = re.search(FilePattern, x)
-        if matched:
+        if reg and matched:
             SeqNum = int(matched.group(1))
-            FirstChainNAME = matched.group(2)
-            SecondChainNAME = matched.group(3)
+            FirstChainNAME = reg.group(1).lower()
+            SecondChainNAME = reg.group(2).lower()
             name = dict()
             name["FirstChain"] = FirstChainNAME
             name["SecondChain"] = SecondChainNAME
