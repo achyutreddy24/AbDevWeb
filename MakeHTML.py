@@ -2,6 +2,7 @@ import glob
 import os
 import re
 import argparse
+import subprocess
 
 
 parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ args = parser.parse_args()
 #Leave blank if python file is in same place
 #End the path with a '/'
 FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
-# FolderPATH = "../output_ama1_togo/output_ama1_togo/"
+FolderPATH = "../output_ama1_togo/output_ama1_togo/"
 
 
 #Name of HTML File
@@ -125,7 +126,7 @@ HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>1{Num
 def getSequences():
     Seq_Dict = {}
     FilePattern = re.compile("""seq_(\d+).*\.fst""")
-    FstPattern = re.compile(""">\s*(.*)\n[\s\S]*\n>\s*(.*)""")
+    FstPattern = re.compile(""">\s*(.*)\n([\s\S]*)\n>\s*(.*)\n([\s\S]*)""")
     for x in glob.glob(FolderPATH+"*.fst"):
         file = open(x, "r")
         data = file.read()
@@ -134,10 +135,14 @@ def getSequences():
         if reg and matched:
             SeqNum = int(matched.group(1))
             FirstChainNAME = reg.group(1).lower()
-            SecondChainNAME = reg.group(2).lower()
+            FirstChainSEQ = reg.group(2)
+            SecondChainNAME = reg.group(3).lower()
+            SecondChainSEQ = reg.group(4)
             name = dict()
             name["FirstChain"] = FirstChainNAME
+            name["FirstChainSeq"] = FirstChainSEQ
             name["SecondChain"] = SecondChainNAME
+            name["SecondChainSeq"] = SecondChainSEQ
             Seq_Dict[SeqNum] = name
         else:
             pass
@@ -206,6 +211,29 @@ def getHYDSummary(fileName):
             pass
     return LIST
     
+def makeFullFastaFiles(SeqDict):
+    FirstChainlst = []
+    SecondChainlst = []
+    for key in SeqDict.keys():
+        FirstChainlst.append(">"+SeqDict[key]["FirstChain"])
+        FirstChainlst.append(SeqDict[key]["FirstChainSeq"])
+        
+        SecondChainlst.append(">"+SeqDict[key]["SecondChain"])
+        SecondChainlst.append(SeqDict[key]["SecondChainSeq"])
+        
+    FirstChainfst = "\n".join(FirstChainlst)
+    SecondChainfst = "\n".join(SecondChainlst)
+    
+    with open("FirstChain.fst", "w") as f:
+        f.write(FirstChainfst)
+        
+    with open("SecondChain.fst", "w") as f:
+        f.write(SecondChainfst)
+        
+def makeAlignment(fstFileName):
+    #subprocess.call("cd ClustalO")
+    subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd".format(fileName=fstFileName))
+    
 def makeString(num):
     """Turns the sequence number into a string and adds zeros"""
     num = str(num)
@@ -244,6 +272,10 @@ def makeHTML():
     #Lists for appending html data
     Tables = []
     Sections = []
+    
+    makeFullFastaFiles(Sequences)
+    makeAlignment("FirstChain")
+    makeAlignment("SecondChain")
     
     #Iterates over all the sequences
     for SeqNum in range(len(Sequences)):
