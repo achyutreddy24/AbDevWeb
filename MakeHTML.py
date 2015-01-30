@@ -620,11 +620,11 @@ def makeHTML():
     Tables = []
     Sections = []
     
-    """
+
     makeFullFastaFiles(Sequences)
     makeAlignment("FirstChain")
     makeAlignment("SecondChain")
-    """
+
     
     #Iterates over all the sequences
     for SeqNum in range(len(Sequences)):
