@@ -482,7 +482,9 @@ def getSequences():
         if reg and matched:
             SeqNum = int(matched.group(1))
             FirstChainNAME = reg.group(1).replace(" ","").lower()
-            SecondChainNAME = reg.group(2).replace(" ","").lower()
+            FirstChainSEQ = reg.group(2)
+            SecondChainNAME = reg.group(3).replace(" ","").lower()
+            SecondChainSEQ = reg.group(4)
             print( FirstChainNAME ) 
             print( SecondChainNAME ) 
             name = dict()
