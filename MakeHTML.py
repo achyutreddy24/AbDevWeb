@@ -1,9 +1,12 @@
 import glob
 import os
 import re
+import math
+import sys
 import argparse
 import subprocess
 
+from Bio import Phylo
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
@@ -64,10 +67,17 @@ BaseHTML = """
                                                                                                      <td><b>H1</b></td><td><b>H2</b></td><td><b>H3</b></td><td><b>PTM Risk</b></td><td><b>Aggregate Risk</b></td><td><b>RAW Files</b></td></tr>
                                                                                        
             {OpenTable}
+            
+            <div align=center><A HREF="#FirstChainPhylo">Go To first phylo tree</a></div>
+            <div align=center><A HREF="#SecondChainPhylo">Go To second phylo tree</a></div>
             </table>
         </section>
         {Sections}
 
+        <div style="font: 15pt Times New Roman"><A NAME="FirstChainPhylo"><b>FirstChain Phylogenetic Tree</b></div>
+        <div align=left>{FirstPhylo}</div>
+        <div style="font: 15pt Times New Roman"><A NAME="SecondChainPhylo"><b>FirstChain Phylogenetic Tree</b></div>
+        <div align=left>{SecondPhylo}</div>
     </body>
 </html>
 """
@@ -121,6 +131,342 @@ PTMSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{PTMype}</td><td>{CD
 
 HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>1{Num}</td><td>{SAP_AREA}</td><td>{SASA}</td><td>{PSASA}</td><td>{HYD_RES_SASA}</td><td>{HYD_RESIDUES}</td></tr>
 """
+
+
+
+
+
+def draw(tree, label_func=str, fileName='default', do_show=True, show_confidence=True,
+         # For power users
+         axes=None, branch_labels=None, *args, **kwargs):
+    """Plot the given tree using matplotlib (or pylab).
+    The graphic is a rooted tree, drawn with roughly the same algorithm as
+    draw_ascii.
+    Additional keyword arguments passed into this function are used as pyplot
+    options. The input format should be in the form of:
+    pyplot_option_name=(tuple), pyplot_option_name=(tuple, dict), or
+    pyplot_option_name=(dict).
+    Example using the pyplot options 'axhspan' and 'axvline':
+    >>> Phylo.draw(tree, axhspan=((0.25, 7.75), {'facecolor':'0.5'}),
+    ...     axvline={'x':'0', 'ymin':'0', 'ymax':'1'})
+    Visual aspects of the plot can also be modified using pyplot's own functions
+    and objects (via pylab or matplotlib). In particular, the pyplot.rcParams
+    object can be used to scale the font size (rcParams["font.size"]) and line
+    width (rcParams["lines.linewidth"]).
+    :Parameters:
+        label_func : callable
+            A function to extract a label from a node. By default this is str(),
+            but you can use a different function to select another string
+            associated with each node. If this function returns None for a node,
+            no label will be shown for that node.
+        do_show : bool
+            Whether to show() the plot automatically.
+        show_confidence : bool
+            Whether to display confidence values, if present on the tree.
+        axes : matplotlib/pylab axes
+            If a valid matplotlib.axes.Axes instance, the phylogram is plotted
+            in that Axes. By default (None), a new figure is created.
+        branch_labels : dict or callable
+            A mapping of each clade to the label that will be shown along the
+            branch leading to it. By default this is the confidence value(s) of
+            the clade, taken from the ``confidence`` attribute, and can be
+            easily toggled off with this function's ``show_confidence`` option.
+            But if you would like to alter the formatting of confidence values,
+            or label the branches with something other than confidence, then use
+            this option.
+    """
+
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        try:
+            import pylab as plt
+        except ImportError:
+            from Bio import MissingPythonDependencyError
+            raise MissingPythonDependencyError(
+                "Install matplotlib or pylab if you want to use draw.")
+
+    import matplotlib.collections as mpcollections
+
+    # Arrays that store lines for the plot of clades
+    horizontal_linecollections = []
+    vertical_linecollections = []
+
+    # Options for displaying branch labels / confidence
+    def conf2str(conf):
+        if int(conf) == conf:
+            return str(int(conf))
+        return str(conf)
+    if not branch_labels:
+        if show_confidence:
+            def format_branch_label(clade):
+                if hasattr(clade, 'confidences'):
+                    # phyloXML supports multiple confidences
+                    return '/'.join(conf2str(cnf.value)
+                                    for cnf in clade.confidences)
+                if clade.confidence:
+                    return conf2str(clade.confidence)
+                return None
+        else:
+            def format_branch_label(clade):
+                return None
+    elif isinstance(branch_labels, dict):
+        def format_branch_label(clade):
+            return branch_labels.get(clade)
+    else:
+        assert callable(branch_labels), \
+            "branch_labels must be either a dict or a callable (function)"
+        format_branch_label = branch_labels
+
+    # Layout
+
+    def get_x_positions(tree):
+        """Create a mapping of each clade to its horizontal position.
+        Dict of {clade: x-coord}
+        """
+        depths = tree.depths()
+        # If there are no branch lengths, assume unit branch lengths
+        if not max(depths.values()):
+            depths = tree.depths(unit_branch_lengths=True)
+        return depths
+
+    def get_y_positions(tree):
+        """Create a mapping of each clade to its vertical position.
+        Dict of {clade: y-coord}.
+        Coordinates are negative, and integers for tips.
+        """
+        maxheight = tree.count_terminals()
+        # Rows are defined by the tips
+        heights = dict((tip, maxheight - i)
+                       for i, tip in enumerate(reversed(tree.get_terminals())))
+
+        # Internal nodes: place at midpoint of children
+        def calc_row(clade):
+            for subclade in clade:
+                if subclade not in heights:
+                    calc_row(subclade)
+            # Closure over heights
+            heights[clade] = (heights[clade.clades[0]] +
+                              heights[clade.clades[-1]]) / 2.0
+
+        if tree.root.clades:
+            calc_row(tree.root)
+        return heights
+
+    x_posns = get_x_positions(tree)
+    y_posns = get_y_positions(tree)
+    # The function draw_clade closes over the axes object
+    if axes is None:
+        fig = plt.figure()
+        axes = fig.add_subplot(1, 1, 1)
+    elif not isinstance(axes, plt.matplotlib.axes.Axes):
+        raise ValueError("Invalid argument for axes: %s" % axes)
+
+    def draw_clade_lines(use_linecollection=False, orientation='horizontal',
+                         y_here=0, x_start=0, x_here=0, y_bot=0, y_top=0,
+                         color='black', lw='.1'):
+        """Create a line with or without a line collection object.
+        Graphical formatting of the lines representing clades in the plot can be
+        customized by altering this function.
+        """
+        if (use_linecollection is False and orientation == 'horizontal'):
+            axes.hlines(y_here, x_start, x_here, color=color, lw=lw)
+        elif (use_linecollection is True and orientation == 'horizontal'):
+            horizontal_linecollections.append(mpcollections.LineCollection(
+                [[(x_start, y_here), (x_here, y_here)]], color=color, lw=lw),)
+        elif (use_linecollection is False and orientation == 'vertical'):
+            axes.vlines(x_here, y_bot, y_top, color=color)
+        elif (use_linecollection is True and orientation == 'vertical'):
+            vertical_linecollections.append(mpcollections.LineCollection(
+                [[(x_here, y_bot), (x_here, y_top)]], color=color, lw=lw),)
+
+    def draw_clade(clade, x_start, color, lw):
+        """Recursively draw a tree, down from the given clade."""
+        x_here = x_posns[clade]
+        y_here = y_posns[clade]
+        # phyloXML-only graphics annotations
+        if hasattr(clade, 'color') and clade.color is not None:
+            color = clade.color.to_hex()
+        if hasattr(clade, 'width') and clade.width is not None:
+            lw = clade.width * plt.rcParams['lines.linewidth']
+        # Draw a horizontal line from start to here
+        draw_clade_lines(use_linecollection=True, orientation='horizontal',
+                         y_here=y_here, x_start=x_start, x_here=x_here, color=color, lw=lw)
+        # Add node/taxon labels
+        label = label_func(clade)
+        if label not in (None, clade.__class__.__name__):
+            axes.text(x_here, y_here, ' %s' %
+                      label, verticalalignment='center')
+        # Add label above the branch (optional)
+        conf_label = format_branch_label(clade)
+        if conf_label:
+            axes.text(0.5 * (x_start + x_here), y_here, conf_label,
+                      fontsize='small', horizontalalignment='center')
+        if clade.clades:
+            # Draw a vertical line connecting all children
+            y_top = y_posns[clade.clades[0]]
+            y_bot = y_posns[clade.clades[-1]]
+            # Only apply widths to horizontal lines, like Archaeopteryx
+            draw_clade_lines(use_linecollection=True, orientation='vertical',
+                             x_here=x_here, y_bot=y_bot, y_top=y_top, color=color, lw=lw)
+            # Draw descendents
+            for child in clade:
+                draw_clade(child, x_here, color, lw)
+
+    draw_clade(tree.root, 0, 'k', plt.rcParams['lines.linewidth'])
+
+    # If line collections were used to create clade lines, here they are added
+    # to the pyplot plot.
+    for i in horizontal_linecollections:
+        axes.add_collection(i)
+    for i in vertical_linecollections:
+        axes.add_collection(i)
+
+    # Aesthetics
+
+    if hasattr(tree, 'name') and tree.name:
+        axes.set_title(tree.name)
+    axes.set_xlabel('branch length')
+    axes.set_ylabel('taxa')
+    # Add margins around the tree to prevent overlapping the axes
+    xmax = max(x_posns.values())
+    axes.set_xlim(-0.05 * xmax, 1.25 * xmax)
+    # Also invert the y-axis (origin at the top)
+    # Add a small vertical margin, but avoid including 0 and N+1 on the y axis
+    axes.set_ylim(max(y_posns.values()) + 0.8, 0.2)
+
+    # Parse and process key word arguments as pyplot options
+    for key, value in kwargs.items():
+        try:
+            # Check that the pyplot option input is iterable, as required
+            [i for i in value]
+        except TypeError:
+            raise ValueError('Keyword argument "%s=%s" is not in the format '
+                             'pyplot_option_name=(tuple), pyplot_option_name=(tuple, dict),'
+                             ' or pyplot_option_name=(dict) '
+                             % (key, value))
+        if isinstance(value, dict):
+            getattr(plt, str(key))(**dict(value))
+        elif not (isinstance(value[0], tuple)):
+            getattr(plt, str(key))(*value)
+        elif (isinstance(value[0], tuple)):
+            getattr(plt, str(key))(*value[0], **dict(value[1]))
+
+    if do_show:
+        #plt.savefig(fileName)
+        plt.show()
+
+
+
+
+
+
+
+#The draw_ascii() function is modified from the Biopython source code to return
+#a string with the tree instead of printing it out
+def draw_ascii(tree, file=None, column_width=80):
+    """Draw an ascii-art phylogram of the given tree.
+    The printed result looks like::
+                                        _________ Orange
+                         ______________|
+                        |              |______________ Tangerine
+          ______________|
+         |              |          _________________________ Grapefruit
+        _|              |_________|
+         |                        |______________ Pummelo
+         |
+         |__________________________________ Apple
+    :Parameters:
+        file : file-like object
+            File handle opened for writing the output drawing. (Default:
+            standard output)
+        column_width : int
+            Total number of text columns used by the drawing.
+    """
+    if file is None:
+        file = sys.stdout
+
+    taxa = tree.get_terminals()
+    # Some constants for the drawing calculations
+    max_label_width = max(len(str(taxon)) for taxon in taxa)
+    drawing_width = column_width - max_label_width - 1
+    drawing_height = 2 * len(taxa) - 1
+
+    def get_col_positions(tree):
+        """Create a mapping of each clade to its column position."""
+        depths = tree.depths()
+        # If there are no branch lengths, assume unit branch lengths
+        if not max(depths.values()):
+            depths = tree.depths(unit_branch_lengths=True)
+        # Potential drawing overflow due to rounding -- 1 char per tree layer
+        fudge_margin = int(math.ceil(math.log(len(taxa), 2)))
+        cols_per_branch_unit = ((drawing_width - fudge_margin)
+                                / float(max(depths.values())))
+        return dict((clade, int(blen * cols_per_branch_unit + 1.0))
+                    for clade, blen in depths.items())
+
+    def get_row_positions(tree):
+        positions = dict((taxon, 2 * idx) for idx, taxon in enumerate(taxa))
+
+        def calc_row(clade):
+            for subclade in clade:
+                if subclade not in positions:
+                    calc_row(subclade)
+            positions[clade] = ((positions[clade.clades[0]] +
+                                 positions[clade.clades[-1]]) // 2)
+
+        calc_row(tree.root)
+        return positions
+
+    col_positions = get_col_positions(tree)
+    row_positions = get_row_positions(tree)
+    char_matrix = [[' ' for x in range(drawing_width)]
+                   for y in range(drawing_height)]
+
+    def draw_clade(clade, startcol):
+        thiscol = col_positions[clade]
+        thisrow = row_positions[clade]
+        # Draw a horizontal line
+        for col in range(startcol, thiscol):
+            char_matrix[thisrow][col] = '_'
+        if clade.clades:
+            # Draw a vertical line
+            toprow = row_positions[clade.clades[0]]
+            botrow = row_positions[clade.clades[-1]]
+            for row in range(toprow + 1, botrow + 1):
+                char_matrix[row][thiscol] = '|'
+            # NB: Short terminal branches need something to stop rstrip()
+            if (col_positions[clade.clades[0]] - thiscol) < 2:
+                char_matrix[toprow][thiscol] = ','
+            # Draw descendents
+            for child in clade:
+                draw_clade(child, thiscol + 1)
+
+    printlst = []
+    draw_clade(tree.root, 0)
+    # Print the complete drawing
+    for idx, row in enumerate(char_matrix):
+        line = ''.join(row).rstrip()
+        # Add labels for terminal taxa in the right margin
+        if idx % 2 == 0:
+            line += ' ' + str(taxa[idx // 2])
+        #file.write(line + '\n')
+        printlst.append(line + '\n')
+    printlst.append('\n')
+    printedStr = ''.join(printlst)
+    return printedStr
+
+
+def makePhylo():
+    firstTree = Phylo.read('FirstChain.dnd', 'newick')
+    secondTree = Phylo.read('SecondChain.dnd', 'newick')
+    
+    firstAscii = draw(firstTree, fileName='FirstChain.png')
+    secondAscii = draw(secondTree, fileName='SecondChain.png')
+
+    return [firstAscii, secondAscii]
+
+
 
 #Gets sequences and FirstChain and SecondChain name from all .fst files
 def getSequences():
@@ -232,7 +578,7 @@ def makeFullFastaFiles(SeqDict):
         
 def makeAlignment(fstFileName):
     #subprocess.call("cd ClustalO")
-    subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd".format(fileName=fstFileName))
+    subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --force".format(fileName=fstFileName))
     
 def makeString(num):
     """Turns the sequence number into a string and adds zeros"""
@@ -276,6 +622,7 @@ def makeHTML():
     makeFullFastaFiles(Sequences)
     makeAlignment("FirstChain")
     makeAlignment("SecondChain")
+    
     
     #Iterates over all the sequences
     for SeqNum in range(len(Sequences)):
@@ -512,7 +859,8 @@ else:
     dirnamelst = dirname.split("/")
     dirname = dirnamelst[-2]
     
+firstPhylo, secondPhylo = makePhylo()
 TablesFinal = makeHTML()
 Base = BaseHTML
-Base = Base.format(DirName=dirname, OpenTable=TablesFinal[0], Sections=TablesFinal[1])
+Base = Base.format(DirName=dirname, OpenTable=TablesFinal[0], Sections=TablesFinal[1], FirstPhylo=firstPhylo, SecondPhylo=secondPhylo)
 saveHTML(Base, FinalFileName)
