@@ -474,16 +474,17 @@ def getSequences():
     FilePattern = re.compile("""seq_(\d+).*\.fst""")
     FstPattern = re.compile(""">\s*(.*)\n([\s\S]*)\n>\s*(.*)\n([\s\S]*)""")
     for x in glob.glob(FolderPATH+"*.fst"):
+        print (x) 
         file = open(x, "r")
         data = file.read()
         reg = re.search(FstPattern, data)
         matched = re.search(FilePattern, x)
         if reg and matched:
             SeqNum = int(matched.group(1))
-            FirstChainNAME = reg.group(1).lower()
-            FirstChainSEQ = reg.group(2)
-            SecondChainNAME = reg.group(3).lower()
-            SecondChainSEQ = reg.group(4)
+            FirstChainNAME = reg.group(1).replace(" ","").lower()
+            SecondChainNAME = reg.group(2).replace(" ","").lower()
+            print( FirstChainNAME ) 
+            print( SecondChainNAME ) 
             name = dict()
             name["FirstChain"] = FirstChainNAME
             name["FirstChainSeq"] = FirstChainSEQ
@@ -619,10 +620,11 @@ def makeHTML():
     Tables = []
     Sections = []
     
+    """
     makeFullFastaFiles(Sequences)
     makeAlignment("FirstChain")
     makeAlignment("SecondChain")
-    
+    """
     
     #Iterates over all the sequences
     for SeqNum in range(len(Sequences)):
