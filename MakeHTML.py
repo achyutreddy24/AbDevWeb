@@ -6,13 +6,16 @@ import sys
 import argparse
 import subprocess
 
-from Bio import Phylo
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+parser.add_argument("--phylo", help="increase output verbosity", action="store_true", default=False)
 parser.add_argument("-p", "--path", help="Path to folder with reports, (change '\\' to '/') end the string with a '/' \n leave blank for root directory", default="")
 parser.add_argument("-o", "--output", help="Name of output html file, leave blank for default", default="Web-Report.html")
 args = parser.parse_args()
+
+if args.phylo is True:
+    from Bio import Phylo
 
 
 #Path to folder with the files, relative to where the python file is
@@ -525,10 +528,10 @@ def makeHTML():
     Tables = []
     Sections = []
     
-
-    makeFullFastaFiles(Sequences)
-    makeAlignment("FirstChain")
-    makeAlignment("SecondChain")
+    if args.phylo is True:
+        makeFullFastaFiles(Sequences)
+        makeAlignment("FirstChain")
+        makeAlignment("SecondChain")
 
     
     #Iterates over all the sequences
