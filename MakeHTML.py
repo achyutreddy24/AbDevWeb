@@ -19,7 +19,7 @@ args = parser.parse_args()
 #Leave blank if python file is in same place
 #End the path with a '/'
 FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
-#FolderPATH = "../output_ama1_togo/output_ama1_togo/"
+FolderPATH = "../output_ama1_togo/output_ama1_togo/"
 
 
 #Name of HTML File
@@ -481,7 +481,10 @@ def makeFullFastaFiles(SeqDict):
         
 def makeAlignment(fstFileName):
     #subprocess.call("cd ClustalO")
-    subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --force".format(fileName=fstFileName))
+    try:
+        subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --force".format(fileName=fstFileName))
+    except:
+        print("Error make sure ClustalO is installed in the ClustalO subfolder")
     
 def makeString(num):
     """Turns the sequence number into a string and adds zeros"""
