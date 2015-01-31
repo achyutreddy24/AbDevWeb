@@ -353,8 +353,9 @@ def draw(tree, label_func=str, fileName='default', do_show=True, show_confidence
             getattr(plt, str(key))(*value[0], **dict(value[1]))
 
     if do_show:
-        #plt.savefig(fileName)
-        plt.show()
+        plt.savefig(fileName)
+        plt.close()
+        #plt.show()
 
 
 
