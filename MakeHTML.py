@@ -75,9 +75,9 @@ BaseHTML = """
         {Sections}
 
         <div align=center style="font: 15pt Times New Roman"><A NAME="FirstChainPhylo"><b>FirstChain Phylogenetic Tree</b></div>
-        <img height=300 align=center src="{phylo1}" border=0>
+        <img height=500 align=center src="{phylo1}" border=0>
         <div align=center style="font: 15pt Times New Roman"><A NAME="SecondChainPhylo"><b>SecondChain Phylogenetic Tree</b></div>
-        <img height=300 align=center src="{phylo2}" border=0>
+        <img height=500 align=center src="{phylo2}" border=0>
     </body>
 </html>
 """
