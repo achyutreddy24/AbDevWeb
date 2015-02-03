@@ -22,8 +22,9 @@ if args.phylo is True:
 #Leave blank if python file is in same place
 #End the path with a '/'
 FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
-FolderPATH = "../output_ama1_togo/output_ama1_togo/"
+#FolderPATH = "../output_ama1_togo/output_ama1_togo/"
 
+print('FolderPATH = '+FolderPATH ) 
 
 #Name of HTML File
 FinalFileName = args.output
@@ -394,8 +395,8 @@ def getSequences():
             FirstChainSEQ = reg.group(2)
             SecondChainNAME = reg.group(3).replace(" ","").lower()
             SecondChainSEQ = reg.group(4)
-            print( FirstChainNAME ) 
-            print( SecondChainNAME ) 
+            vPrint( FirstChainNAME ) 
+            vPrint( SecondChainNAME ) 
             name = dict()
             name["FirstChain"] = FirstChainNAME
             name["FirstChainSeq"] = FirstChainSEQ
