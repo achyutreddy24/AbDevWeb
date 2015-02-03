@@ -22,7 +22,7 @@ if args.phylo is True:
 #Leave blank if python file is in same place
 #End the path with a '/'
 FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
-#FolderPATH = "../output_ama1_togo/output_ama1_togo/"
+FolderPATH = "../output_ama1_togo/output_ama1_togo/"
 
 
 #Name of HTML File
@@ -71,18 +71,24 @@ BaseHTML = """
                                                                                        
             {OpenTable}
             
-            <div align=center><A HREF="#FirstChainPhylo">Go To first phylo tree</a></div>
-            <div align=center><A HREF="#SecondChainPhylo">Go To second phylo tree</a></div>
+            {PhyloHeader}
             </table>
         </section>
         {Sections}
 
-        <div align=center style="font: 15pt Times New Roman"><A NAME="FirstChainPhylo"><b>FirstChain Phylogenetic Tree</b></div>
-        <img height=500 align=center src="{phylo1}" border=0>
-        <div align=center style="font: 15pt Times New Roman"><A NAME="SecondChainPhylo"><b>SecondChain Phylogenetic Tree</b></div>
-        <img height=500 align=center src="{phylo2}" border=0>
+        {PhyloBody}
     </body>
 </html>
+"""
+
+PhyloHeader = """<div align=center><A HREF="#FirstChainPhylo">Go To first phylo tree</a></div>
+<div align=center><A HREF="#SecondChainPhylo">Go To second phylo tree</a></div>
+"""
+
+PhyloBody = """<div align=center style="font: 15pt Times New Roman"><A NAME="FirstChainPhylo"><b>FirstChain Phylogenetic Tree</b></div>
+<img height=500 align=center src="{phylo1}" border=0>
+<div align=center style="font: 15pt Times New Roman"><A NAME="SecondChainPhylo"><b>SecondChain Phylogenetic Tree</b></div>
+<img height=500 align=center src="{phylo2}" border=0>
 """
 
 SectionHTML = """
@@ -772,6 +778,12 @@ else:
 
 TablesFinal = makeHTML()
 Base = BaseHTML
+if args.phylo:
+    PH = PhyloHeader
+    PB = PhyloBody.format(phylo1=FolderPATH+"FirstChain.png", phylo2=FolderPATH+"SecondChain.png")
+else:
+    PH = ''
+    PB = ''
 Base = Base.format(DirName=dirname, OpenTable=TablesFinal[0], Sections=TablesFinal[1],
-                    phylo1=FolderPATH+"FirstChain.png", phylo2=FolderPATH+"SecondChain.png")
+                   PhyloHeader=PH, PhyloBody=PB)
 saveHTML(Base, FinalFileName)
