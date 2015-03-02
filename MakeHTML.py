@@ -391,6 +391,7 @@ def getSequences():
         reg = re.search(FstPattern, data)
         matched = re.search(FilePattern, x)
         germ = re.search(GermPattern, x)
+
         if reg and matched and not germ:
             SeqNum = int(matched.group(1))
             FirstChainNAME = reg.group(1).replace(" ","").lower()
@@ -405,8 +406,6 @@ def getSequences():
             name["SecondChain"] = SecondChainNAME
             name["SecondChainSeq"] = SecondChainSEQ
             Seq_Dict[SeqNum] = name
-            
-            continue
         else:
             pass
     return Seq_Dict
