@@ -10,6 +10,7 @@ import subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 parser.add_argument("--phylo", help="increase output verbosity", action="store_true", default=False)
+parser.add_argument("-g", "--germ", help="increase output verbosity", action="store_true", default=False)
 parser.add_argument("-p", "--path", help="Path to folder with reports, (change '\\' to '/') end the string with a '/' \n leave blank for root directory", default="")
 parser.add_argument("-o", "--output", help="Name of output html file, leave blank for default", default="Web-Report.html")
 args = parser.parse_args()
@@ -23,6 +24,7 @@ if args.phylo is True:
 #End the path with a '/'
 FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
 #FolderPATH = "../output_ama1_togo/output_ama1_togo/"
+FolderPATH = "../output_m71_germ_derived/output_m71derived/"
 
 print('FolderPATH = '+FolderPATH ) 
 
@@ -376,20 +378,20 @@ def makePhylo():
     draw(secondTree, fileName=FolderPATH+'SecondChain.png')
 
 
-
-
 #Gets sequences and FirstChain and SecondChain name from all .fst files
 def getSequences():
     Seq_Dict = {}
     FilePattern = re.compile("""seq_(\d+).*\.fst""")
     FstPattern = re.compile(""">\s*(.*)\n([\s\S]*)\n>\s*(.*)\n([\s\S]*)""")
+    GermPattern = re.compile(""".*germ[hc|lc].*""")
     for x in glob.glob(FolderPATH+"*.fst"):
-        print (x) 
+        vPrint (x) 
         file = open(x, "r")
         data = file.read()
         reg = re.search(FstPattern, data)
         matched = re.search(FilePattern, x)
-        if reg and matched:
+        germ = re.search(GermPattern, x)
+        if reg and matched and not germ:
             SeqNum = int(matched.group(1))
             FirstChainNAME = reg.group(1).replace(" ","").lower()
             FirstChainSEQ = reg.group(2)
@@ -403,6 +405,8 @@ def getSequences():
             name["SecondChain"] = SecondChainNAME
             name["SecondChainSeq"] = SecondChainSEQ
             Seq_Dict[SeqNum] = name
+            
+            continue
         else:
             pass
     return Seq_Dict
@@ -549,11 +553,13 @@ def makeHTML():
         #Gets the cdrs from the hydr file
         vPrint("Sequence info"+" "+Sequences[SeqNum]["FirstChain"]+" "+Sequences[SeqNum]["SecondChain"])
         CDRName = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+        print("CDR is ",Sequences[SeqNum]["SecondChain"])
         
         try:
             CDRs = getCDR(CDRName)
         except Exception as e:
             vPrint("Error reading CDRs, continuing")
+            vPrint(e)
             continue
         
         #These variables are for risk counters in first table
