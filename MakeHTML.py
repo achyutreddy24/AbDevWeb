@@ -513,11 +513,11 @@ def makeString(num):
     return num
     
 def highlightLetter(str, indexDict):
-    htmSecondChainolor = '<font color="{Color}">{Letter}</font>'
+    htmSecondChainColor = '<font color="{Color}">{Letter}</font>'
     newStrlst = []
     for x in range(len(str)):
         if x in indexDict:
-            newHTML = htmSecondChainolor.format(Color = indexDict[x], Letter = str[x])
+            newHTML = htmSecondChainColor.format(Color = indexDict[x], Letter = str[x])
             newStrlst.append(newHTML)
         else:
             newStrlst.append(str[x])
