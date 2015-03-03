@@ -787,6 +787,7 @@ def makeHTML():
         HYDHTML = "\n".join(HYDHTMLs)
         
         #Get germ data
+        Germ_html = ""
         if args.germ:
             germ_lc_path = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_germlc.fst".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
             germ_hc_path = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_germhc.fst".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
