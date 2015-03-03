@@ -127,7 +127,7 @@ SectionHTML = """
 
 GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0>
 
-            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Light Chain GermLine Sequences</b></h2>
+            <h2 style="font: 16pt Times New Roman" align=center><td><b>Light Chain GermLine Sequences</b></h2>
             <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
             {LCGermTable}
             
@@ -137,7 +137,7 @@ GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0
             </table>
             """
             
-GermRow = """<tr bgcolor="#C0C0C0" align=center><td>{Name}</td><td>{Sequence}</td></tr>"""
+GermRow = """<tr bgcolor="#C0C0C0" align=left><td>{Name}</td><td>{Sequence}</td></tr>"""
 
 
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
@@ -818,7 +818,7 @@ def makeHTML():
                 else:
                     continue
                     
-                LC_GERM_TABLE.append(GermRow.format(Name=key, Sequence=germ_lc[key]))
+                LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[0], Sequence=germ_lc[key]))
             HC_GERM_TABLE = []
             germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
             HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]]))
@@ -830,7 +830,7 @@ def makeHTML():
                 else:
                     continue
                 
-                HC_GERM_TABLE.append(GermRow.format(Name=key, Sequence=germ_hc[key]))
+                HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[0], Sequence=germ_hc[key]))
                 
             GERM_LC = "\n".join(LC_GERM_TABLE)
             GERM_HC = "\n".join(HC_GERM_TABLE)
