@@ -810,9 +810,10 @@ def makeHTML():
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict)
             LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]]))
+            if germ_lc["Seq"] in germ_lc: del germ_lc[germ_lc["Seq"]]
+            if "Seq" in germ_lc: del germ_lc["Seq"]
             for key in germ_lc:
-                seq_name = germ_lc["Seq"]
-                if key is not "Seq" and key is not seq_name and key is not germ_lc[seq_name]:
+                if key is not "Seq":
                     germ_lc[key] = highlightLetter(germ_lc[key], germ_lc_indexDict)
                 else:
                     continue
@@ -821,11 +822,10 @@ def makeHTML():
             HC_GERM_TABLE = []
             germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
             HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]]))
+            if germ_hc["Seq"] in germ_hc: del germ_hc[germ_hc["Seq"]]
+            if "Seq" in germ_hc: del germ_hc["Seq"]
             for key in germ_hc:
-                seq_name = germ_hc["Seq"]
-                if key == germ_hc[germ_hc["Seq"]]:
-                    continue
-                if key is not "Seq" and key is not seq_name and key is not germ_hc[seq_name]:
+                if key is not "Seq":
                     germ_hc[key] = highlightLetter(germ_hc[key], germ_hc_indexDict)
                 else:
                     continue
