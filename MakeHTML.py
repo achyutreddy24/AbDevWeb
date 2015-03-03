@@ -416,7 +416,7 @@ def getSequences():
             SecondChainNAME = reg.group(3).replace(" ","").lower().strip() 
             SecondChainSEQ = reg.group(4)
             vPrint( "FirstChainName="+FirstChainNAME+"<end>" ) 
-            vPrint( SecondChainNAME="+SecondChainNAME+"<end>" ) 
+            vPrint( "SecondChainNAME="+SecondChainNAME+"<end>" ) 
             name = dict()
             name["FirstChain"] = FirstChainNAME
             name["FirstChainSeq"] = FirstChainSEQ
