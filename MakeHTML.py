@@ -425,7 +425,7 @@ def getSequences():
             Seq_Dict[SeqNum] = name
         else:
             pass
-	vPrint('getSequences done.') 
+    vPrint('getSequences done.') 
     return Seq_Dict
 
 #Gets CDRs from hydr.txt
