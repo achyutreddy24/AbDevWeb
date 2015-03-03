@@ -440,9 +440,32 @@ def getGermData(fileName):
     seq_dict = dict()
 
     for n in range(0,len(all_list),2):
-        seq_dict[all_list[n][1:].strip()] = all_list[n+1]
+        seq_dict[all_list[n][1:].strip().lower()] = all_list[n+1]
 
+    seq_dict["Seq"] = all_list[0][1:].strip().lower()
     return seq_dict
+    
+def findDiff(germ_dict):
+    seq_name = germ_dict["Seq"]
+    seq = germ_dict[seq_name]
+    indexes = []
+    affected_keys_and_indexes = dict()
+    for char_pos in range(len(seq)-1):
+        for key in germ_dict:
+            if key == seq_name or key == "Seq":
+                continue
+            vPrint("+CharPos",char_pos)
+            try:
+                if germ_dict[key][char_pos] is not seq[char_pos]:
+                    if char_pos not in indexes:
+                        indexes.append(char_pos)
+                    if key not in affected_keys_and_indexes:
+                        affected_keys_and_indexes[key] = [char_pos]
+                    else:
+                        affected_keys_and_indexes[key].append(char_pos)
+            except Exception as e:
+                vPrint("Index out of bounds in germ line sequences")
+    return [indexes, affected_keys_and_indexes]
 
 def getPTMSummary(fileName):
     """Gets the PTM summary"""
@@ -747,6 +770,16 @@ def makeHTML():
         #Joins all the HYD Table Rows together
         HYDHTML = "\n".join(HYDHTMLs)
         
+        #Get germ data
+        if args.germ:
+            germ_lc_path = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_germlc.fst".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+            germ_hc_path = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_germhc.fst".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
+            
+            germ_lc = getGermData(germ_lc_path)
+            germ_hc = getGermData(germ_hc_path)
+            
+            diff_lc = findDiff(germ_lc)
+            diff_lc = findDiff(germ_hc)
         
         #Creates path for images
         i1 = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.png".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
