@@ -430,7 +430,19 @@ def getCDR(fileName):
     file.close
     #Returns a dictionary with all CDRs
     return CDRs
-   
+    
+def getGermData(fileName):
+    file = open(fileName, "r")
+    data = file.read()
+    single_match = """>\s*(.*)\n(.*)"""
+    
+    all_list = data.split("\n")
+    seq_dict = dict()
+
+    for n in range(0,len(all_list),2):
+        seq_dict[all_list[n]] = all_list[n+1]
+    return seq_dict
+
 def getPTMSummary(fileName):
     """Gets the PTM summary"""
     """Returns a 2d list with outer list holding all the row, and inner list holds the row data"""
@@ -769,7 +781,7 @@ def makeHTML():
     Table = "\n".join(Tables)
     return [Table, Section]
 
-    
+
 #dirname is for subtitle name, gets the parent directory of the files
 dirname = ""
 if FolderPATH == "":
@@ -793,3 +805,4 @@ else:
 Base = Base.format(DirName=dirname, OpenTable=TablesFinal[0], Sections=TablesFinal[1],
                    PhyloHeader=PH, PhyloBody=PB)
 saveHTML(Base, FinalFileName)
+
