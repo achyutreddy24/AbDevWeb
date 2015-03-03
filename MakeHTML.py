@@ -137,7 +137,7 @@ GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0
             </table>
             """
             
-GermRow = """<tr bgcolor="#C0C0C0" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td></tr>"""
+GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td></tr>"""
 
 
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
