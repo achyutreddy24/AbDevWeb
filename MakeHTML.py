@@ -110,6 +110,8 @@ SectionHTML = """
             <tr bgcolor="#C0C0C0" align=center><td>Risk</td><td>Number</td><td>Sap Area</td><td>SASA</td><td>%SASA</td><td>HYD RES SASA</td><td>HYD Residues</td></tr>
             {HYDTable}
             </table>
+            
+            {GermHTML}            
             <div align=center><A HREF="#top">Back to Top</a></div>
             
             
@@ -122,6 +124,20 @@ SectionHTML = """
 </section>
 
 """
+
+GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0>
+
+            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Light Chain GermLine Sequences</b></h2>
+            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
+            {LCGermTable}
+            
+            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Heavy Chain GermLine Sequences</b></h2>
+            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
+            {HCGermTable}
+            </table>
+            """
+            
+GermRow = """<tr bgcolor="#C0C0C0" align=center><td>{Name}</td><td>{Sequence}</td></tr>"""
 
 
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
@@ -784,10 +800,42 @@ def makeHTML():
             germ_lc_indexDict = {}
             germ_hc_indexDict = {}
             
+                        
             for index in diff_lc[0]:
                 germ_lc_indexDict[index] = "#FF0000"
             for index in diff_hc[0]:
                 germ_hc_indexDict[index] = "#FF0000"
+                
+            LC_GERM_TABLE = []
+            germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict)
+            LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]]))
+            for key in germ_lc:
+                seq_name = germ_lc["Seq"]
+                if key is not "Seq" and key is not seq_name and key is not germ_lc[seq_name]:
+                    germ_lc[key] = highlightLetter(germ_lc[key], germ_lc_indexDict)
+                else:
+                    continue
+                    
+                LC_GERM_TABLE.append(GermRow.format(Name=key, Sequence=germ_lc[key]))
+            HC_GERM_TABLE = []
+            germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
+            HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]]))
+            for key in germ_hc:
+                seq_name = germ_hc["Seq"]
+                if key == germ_hc[germ_hc["Seq"]]:
+                    continue
+                if key is not "Seq" and key is not seq_name and key is not germ_hc[seq_name]:
+                    germ_hc[key] = highlightLetter(germ_hc[key], germ_hc_indexDict)
+                else:
+                    continue
+                
+                HC_GERM_TABLE.append(GermRow.format(Name=key, Sequence=germ_hc[key]))
+                
+            GERM_LC = "\n".join(LC_GERM_TABLE)
+            GERM_HC = "\n".join(HC_GERM_TABLE)
+            
+            Germ_html = GermHTML.format(LCGermTable=GERM_LC, HCGermTable=GERM_HC)
+
         
         #Creates path for images
         i1 = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.png".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
@@ -797,7 +845,7 @@ def makeHTML():
         Section = SectionHTML
         Section = Section.format(SeqNum=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], 
                                  SecondChain=Sequences[SeqNum]["SecondChain"], PTMTable=PTMHTML, 
-                                 HYDTable=HYDHTML, img1=i1, img2=i2)
+                                 HYDTable=HYDHTML, img1=i1, img2=i2, GermHTML=Germ_html)
         
         #Appends this section to a list
         Sections.append(Section)
