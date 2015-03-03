@@ -454,7 +454,7 @@ def findDiff(germ_dict):
         for key in germ_dict:
             if key == seq_name or key == "Seq":
                 continue
-            vPrint("+CharPos",char_pos)
+            vPrint("+CharPos "+str(char_pos))
             try:
                 if germ_dict[key][char_pos] is not seq[char_pos]:
                     if char_pos not in indexes:
@@ -779,7 +779,15 @@ def makeHTML():
             germ_hc = getGermData(germ_hc_path)
             
             diff_lc = findDiff(germ_lc)
-            diff_lc = findDiff(germ_hc)
+            diff_hc = findDiff(germ_hc)
+            
+            germ_lc_indexDict = {}
+            germ_hc_indexDict = {}
+            
+            for index in diff_lc[0]:
+                germ_lc_indexDict[index] = "#FF0000"
+            for index in diff_hc[0]:
+                germ_hc_indexDict[index] = "#FF0000"
         
         #Creates path for images
         i1 = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_ptm.png".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
