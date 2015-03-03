@@ -24,7 +24,7 @@ if args.phylo is True:
 #End the path with a '/'
 FolderPATH = args.path  # #"../output_m71derived_togo/output_m71derived_togo/"
 #FolderPATH = "../output_ama1_togo/output_ama1_togo/"
-FolderPATH = "../output_m71_germ_derived/output_m71derived/"
+#FolderPATH = "../output_m71_germ_derived/output_m71derived/"
 
 print('FolderPATH = '+FolderPATH ) 
 
@@ -127,11 +127,11 @@ SectionHTML = """
 
 GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0>
 
-            <h2 style="font: 16pt Times New Roman" align=center><td><b>Light Chain GermLine Sequences</b></h2>
+            <h2 style="font: 16pt Times New Roman" align=center><td><b>LC</b></h2>
             <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
             {LCGermTable}
             
-            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Heavy Chain GermLine Sequences</b></h2>
+            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>HC</b></h2>
             <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
             {HCGermTable}
             </table>
@@ -400,6 +400,7 @@ def getSequences():
     FilePattern = re.compile("""seq_(\d+).*\.fst""")
     FstPattern = re.compile(""">\s*(.*)\n([\s\S]*)\n>\s*(.*)\n([\s\S]*)""")
     GermPattern = re.compile(""".*germ[hc|lc].*""")
+    vPrint('in getSequences .. ') 
     for x in glob.glob(FolderPATH+"*.fst"):
         vPrint (x) 
         file = open(x, "r")
@@ -410,12 +411,12 @@ def getSequences():
 
         if reg and matched and not germ:
             SeqNum = int(matched.group(1))
-            FirstChainNAME = reg.group(1).replace(" ","").lower()
+            FirstChainNAME = reg.group(1).replace(" ","").lower().strip() 
             FirstChainSEQ = reg.group(2)
-            SecondChainNAME = reg.group(3).replace(" ","").lower()
+            SecondChainNAME = reg.group(3).replace(" ","").lower().strip() 
             SecondChainSEQ = reg.group(4)
-            vPrint( FirstChainNAME ) 
-            vPrint( SecondChainNAME ) 
+            vPrint( "FirstChainName="+FirstChainNAME+"<end>" ) 
+            vPrint( SecondChainNAME="+SecondChainNAME+"<end>" ) 
             name = dict()
             name["FirstChain"] = FirstChainNAME
             name["FirstChainSeq"] = FirstChainSEQ
@@ -424,6 +425,7 @@ def getSequences():
             Seq_Dict[SeqNum] = name
         else:
             pass
+	vPrint('getSequences done.') 
     return Seq_Dict
 
 #Gets CDRs from hydr.txt
