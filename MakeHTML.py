@@ -440,7 +440,8 @@ def getGermData(fileName):
     seq_dict = dict()
 
     for n in range(0,len(all_list),2):
-        seq_dict[all_list[n]] = all_list[n+1]
+        seq_dict[all_list[n][1:].strip()] = all_list[n+1]
+
     return seq_dict
 
 def getPTMSummary(fileName):
@@ -549,6 +550,7 @@ def makeHTML():
     #Lists for appending html data
     Tables = []
     Sections = []
+
     
     if args.phylo is True:
         makeFullFastaFiles(Sequences)
