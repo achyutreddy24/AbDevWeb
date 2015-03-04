@@ -820,7 +820,7 @@ def makeHTML():
                 else:
                     continue
                     
-                LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[0], Sequence=germ_lc[key]))
+                LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key]))
             HC_GERM_TABLE = []
             germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
             HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]]))
@@ -832,7 +832,7 @@ def makeHTML():
                 else:
                     continue
                 
-                HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[0], Sequence=germ_hc[key]))
+                HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key]))
                 
             GERM_LC = "\n".join(LC_GERM_TABLE)
             GERM_HC = "\n".join(HC_GERM_TABLE)
