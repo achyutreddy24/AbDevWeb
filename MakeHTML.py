@@ -128,16 +128,16 @@ SectionHTML = """
 GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0>
 
             <h2 style="font: 16pt Times New Roman" align=center><td><b>LC</b></h2>
-            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
+            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td><td>Count</td></tr>
             {LCGermTable}
             
             <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>HC</b></h2>
-            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
+            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td><td>Count</td></tr>
             {HCGermTable}
             </table>
             """
             
-GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td></tr>"""
+GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td><td align=left style="font-family: Courier New">{Count}</td></tr>"""
 
 
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
@@ -811,7 +811,7 @@ def makeHTML():
                 
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict)
-            LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]]))
+            LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]], Count=germ_lc[germ_lc["Seq"]].count("<font color=")))
             if germ_lc["Seq"] in germ_lc: del germ_lc[germ_lc["Seq"]]
             if "Seq" in germ_lc: del germ_lc["Seq"]
             for key in germ_lc:
@@ -820,10 +820,10 @@ def makeHTML():
                 else:
                     continue
                     
-                LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key]))
+                LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key], Count=germ_lc[key].count("<font color=")))
             HC_GERM_TABLE = []
             germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
-            HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]]))
+            HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]], Count=germ_hc[germ_hc["Seq"]].count("<font color=")))
             if germ_hc["Seq"] in germ_hc: del germ_hc[germ_hc["Seq"]]
             if "Seq" in germ_hc: del germ_hc["Seq"]
             for key in germ_hc:
@@ -832,7 +832,7 @@ def makeHTML():
                 else:
                     continue
                 
-                HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key]))
+                HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key], Count=germ_hc[key].count("<font color=")))
                 
             GERM_LC = "\n".join(LC_GERM_TABLE)
             GERM_HC = "\n".join(HC_GERM_TABLE)
