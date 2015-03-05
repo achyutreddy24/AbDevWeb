@@ -1,0 +1,113 @@
+Hydrophobic Patch Analysis Report
+=================================
+Filename : output_ama1/seq_0003_3qot_l_3qot_h_hydr.txt 
+ 
+Light  chain: 
+XDIVMTQSPDSLAVSLGERATINXKSSQSVLYSSNNKNYLAWYQQKPGQP  
+PKLLIYWASTRESGVPDRFSGSGSGTDFTLTISSLQAEDVAVYYXQQYYSTPLTFGQGTKVEIK  
+.........1.........2.........3.........4.........5  
+Heavy  chain :   
+VQLVQSGAEVKKPGSSVKVSXKASGGTFSSYAISWVRQAPGQGLEWMGGI  
+IPIFGTANYAQKFQGRVTITADESTSTAYMELSSLRSEDTAVYYXARYDGIYGELDFWGQGTLVTVS  
+.........1.........2.........3.........4.........5  
+ 
+------------- CDRs ----------------- 
+  CDR definition = CCG 
+  Number of flanking residues = 0 
+
+CDR_H1  25 - 34  :  GGTFSSYAIS   
+CDR_H2  49 - 65  :  GIIPIFGTANYAQKFQG   
+CDR_H3  98 - 107 :  YDGIYGELDF   
+CDR_L1  25 - 41  :  KSSQSVLYSSNNKNYLA   
+CDR_L2  57 - 63  :  WASTRES   
+CDR_L3  96 - 104 :  QQYYSTPLT   
+
+
+---------Hydrophobic Patch Analysis-------------------------
+
+SAP analysis parameters: 
+    sap radius = 5 A
+    strictness = 0.07 
+
+Solvent exposed area of the full protein = 10469.4 A^2
+
+PATCH 1 
+--------
+CDR Label    Residue      SASA        %relative SASA 
+-----------------------------------------------------
+CDR_L1       LYS37        53.80            19.96
+CDR_L2       TRP57        73.77            22.82
+CDR_H1       SER30        62.79            37.27
+CDR_H2       ILE51        22.04            9.60
+CDR_H2       ILE53        100.80            43.91
+CDR_H2       PHE54        132.98            48.31
+CDR_H2       GLY55        64.15            62.58
+CDR_H2       THR56        72.61            37.32
+CDR_H3       ASP99        28.13            14.47
+CDR_H3       GLY100        18.22            17.78
+CDR_H3       ILE101        141.78            61.76
+CDR_H3       TYR102        60.68            20.34
+
+Total Patch SASA  : 831.77 
+    % protein SASA  : 7.94 
+
+PATCH 2 
+--------
+CDR Label    Residue      SASA        %relative SASA 
+-----------------------------------------------------
+Non_CDR       VAL1        88.99            44.49
+Non_CDR       GLN2        129.91            55.36
+Non_CDR       LEU3        5.63            2.41
+Non_CDR       ARG97        23.50            7.79
+CDR_H3       ASP106        25.12            12.92
+CDR_H3       PHE107        94.08            34.18
+
+Total Patch SASA  : 367.23 
+    % protein SASA  : 3.51 
+
+PATCH 3 
+--------
+CDR Label    Residue      SASA        %relative SASA 
+-----------------------------------------------------
+Non_CDR       ALA8        67.06            49.45
+Non_CDR       GLU9        66.67            29.24
+Non_CDR       PRO40        96.60            50.04
+Non_CDR       THR90        26.28            13.51
+Non_CDR       ALA91        0.00            0.00
+Non_CDR       VAL92        30.41            15.21
+Non_CDR       LEU113        86.93            37.19
+Non_CDR       THR115        47.11            24.22
+
+Total Patch SASA  : 421.06 
+    % protein SASA  : 4.02 
+
+PATCH 4 
+--------
+CDR Label    Residue      SASA        %relative SASA 
+-----------------------------------------------------
+Non_CDR       LYS46        63.41            23.52
+Non_CDR       PRO47        138.39            71.68
+Non_CDR       GLY48        88.62            86.46
+
+Total Patch SASA  : 290.42 
+    % protein SASA  : 2.77 
+
+PATCH 5 
+--------
+CDR Label    Residue      SASA        %relative SASA 
+-----------------------------------------------------
+Non_CDR       LEU16        110.69            47.36
+Non_CDR       GLY17        37.84            36.92
+Non_CDR       ALA87        71.48            52.72
+Non_CDR       ILE113        59.88            26.08
+
+Total Patch SASA  : 279.88 
+    % protein SASA  : 2.67 
+
+-------------------------HYDROPHOBIC PATCH SUMMARY----------------------------------------------------
+RISK  NUMBER  SAP_AREA    SASA    %SASA      HYD_RES_SASA      HYD_RESIDUES                           
+------------------------------------------------------------------------------------------------------
+  hi     1    285.3  	  831.8      7.9        532.1    l.W57 h.I51 h.I53 h.F54 h.I101 h.Y102                                                                                                                            
+  low    2    146.6  	  367.2      3.5        188.7    h.V1 h.L3 h.F107                                                                                                                                                 
+--------------------------------------------------------------------------------------------------------
+Note: SASA and HYD_RES_SASA are in A^2; %SASA = PATCH_SASA/FAB_SASA % 

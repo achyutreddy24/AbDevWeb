@@ -1,0 +1,100 @@
+Post-Translation Modification Risk Report
+=========================================
+Filename : output_ama1/seq_0006_3qq9_l_3qq9_h_ptm.txt 
+ 
+Light  chain: 
+DIVLTQSPASLAVSLGQRATIFXRASQSVDYNGISYMHWFQQKPGQPPKL  
+LIYAASNPESGIPARFTGSGSGTDFTLNIHPVEEEDAATYYXQQIIEDPWTFGGGTKLEIK  
+.........1.........2.........3.........4.........5  
+Heavy  chain :   
+AVTLKESGPGILQPSQTLSLTXSFSGFSLSTSGMGVSWIRQPSGKGLEWL  
+AHIYWDDDKRYNPSLKSRLTISKDTSRNQVFLKITSVDTADTATYYXARLYGFTYGFAYWGQGTLVTVS  
+.........1.........2.........3.........4.........5  
+ 
+------------- CDRs ----------------- 
+  CDR definition = CCG 
+  Number of flanking residues = 1 
+    (residue numbers exclude flanking residues) 
+
+CDR_H1  26 - 37  : S  GFSLSTSGMGVS  W  
+CDR_H2  52 - 67  : A  HIYWDDDKRYNPSLKS  R  
+CDR_H3 100 - 109 : R  LYGFTYGFAY  W  
+CDR_L1  24 - 38  : X  RASQSVDYNGISYMH  W  
+CDR_L2  54 - 60  : Y  AASNPES  G  
+CDR_L3  93 - 101 : X  QQIIEDPWT  F  
+
+----------------PTM Motif Analysis-------------------------
+
+Motifs scanned: 
+  deamidation   - NG (strongest), NS , NH , NA
+  isomerization - DS, DG  
+  cleavage      - DP  
+  glycosylation - N[^P][S/T]  
+  oxidation     - W, M 
+  cysteine      - C 
+
+CDR_H1
+-------
+  M : found at residue 34
+    Abs SASA MET 34 = 3.80 
+    %   SASA MET 34 = 1.52 
+    hbond TRP 55:N -- MET 34:O 
+    #atoms within 4 Ang = 32
+CDR_H2
+-------
+  N : found at residue 62
+    Abs SASA ASN 62 = 2.48 
+    %   SASA ASN 62 = 1.24 
+    hbond LEU 65:N -- ASN 62:O 
+    #atoms within 4 Ang = 30
+  W : found at residue 55
+    Abs SASA TRP 55 = 90.89 
+    %   SASA TRP 55 = 28.11 
+    hbond TRP 55:N -- MET 34:O 
+    #atoms within 4 Ang = 25
+CDR_H3
+-------
+CDR_L1
+-------
+  NG : found at residue 32
+    Abs SASA ASN 32 = 147.40 
+    %   SASA ASN 32 = 73.32 
+    No hbonds found
+    #atoms within 4 Ang = 11
+  M : found at residue 37
+    Abs SASA MET 37 = 0.00 
+    %   SASA MET 37 = 0.00 
+    hbond ALA 55:N -- MET 37:O 
+    #atoms within 4 Ang = 28
+CDR_L2
+-------
+  N : found at residue 57
+    Abs SASA ASN 57 = 59.49 
+    %   SASA ASN 57 = 29.59 
+    hbond TYR 53:N -- ASN 57:O 
+    #atoms within 4 Ang = 29
+CDR_L3
+-------
+  DP : found at residue 98
+    Abs SASA ASP 98 = 27.54 
+    %   SASA ASP 98 = 14.17 
+    No hbonds found
+    #atoms within 4 Ang = 21
+  W : found at residue 100
+    Abs SASA TRP 100 = 2.66 
+    %   SASA TRP 100 = 0.82 
+    hbond GLN 93:NE2 -- TRP 100:O 
+    #atoms within 4 Ang = 42
+
+
+---------------------------PTM SUMMARY--------------------------------------------------------
+PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
+----------------------------------------------------------------------------------------------
+cleav     CDR_L3      DP         ASP98        27.5      14.2        21			   -        low 
+deamid    CDR_L1      NG         ASN32       147.4      73.3        11			  0.16      hi  
+oxida     CDR_H1      M          MET34         3.8       1.5        32			   -        low 
+oxida     CDR_H2      W          TRP55        90.9      28.1        25			   -        med 
+oxida     CDR_L1      M          MET37         0.0       0.0        28			   -        low 
+oxida     CDR_L3      W          TRP100        2.7       0.8        42			   -        low 
+----------------------------------------------------------------------------------
+ Note: (1) Half life (in days) is of Asparagine deamidation
