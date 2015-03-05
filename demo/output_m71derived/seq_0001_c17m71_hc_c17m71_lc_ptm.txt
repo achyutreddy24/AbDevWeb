@@ -1,0 +1,80 @@
+Post-Translation Modification Risk Report
+=========================================
+Filename : output_m71derived/seq_0001_c17m71_hc_c17m71_lc_ptm.txt 
+ 
+Light  chain: 
+EIVLTQSPATLSLSPGERATLSCRASQSVSDFLAWYQQKPGQAPRLLIYD  
+ASNRATGIPARFSGSGSGTDFTLTISSLEPEDFAVYYCQQGISAPLTFGQGTKVEIK  
+.........1.........2.........3.........4.........5  
+Heavy  chain :   
+QVQLVQSGAEVKKPGSSVKVSCKASGGTFSSYAISWVRQAPGQGLEWMGG  
+IIPIFGTANYAQKFQGRVTITADESTSTAYMELSSLRSEDTAVYYCARENWSELDYWGQGTLVTVS  
+.........1.........2.........3.........4.........5  
+ 
+------------- CDRs ----------------- 
+  CDR definition = CCG 
+  Number of flanking residues = 1 
+    (residue numbers exclude flanking residues) 
+
+CDR_H1  26 - 35  : S  GGTFSSYAIS  W  
+CDR_H2  50 - 66  : G  GIIPIFGTANYAQKFQG  R  
+CDR_H3  99 - 106 : R  ENWSELDY  W  
+CDR_L1  24 - 34  : C  RASQSVSDFLA  W  
+CDR_L2  50 - 56  : Y  DASNRAT  G  
+CDR_L3  89 - 97  : C  QQGISAPLT  F  
+
+----------------PTM Motif Analysis-------------------------
+
+Motifs scanned: 
+  deamidation   - NG (strongest), NS , NH , NA
+  isomerization - DS, DG  
+  cleavage      - DP  
+  glycosylation - N[^P][S/T]  
+  oxidation     - W, M 
+  cysteine      - C 
+
+CDR_H1
+-------
+CDR_H2
+-------
+  N : found at residue 59
+    Abs SASA ASN 59 = 73.77 
+    %   SASA ASN 59 = 36.70 
+    hbond GLY 50:N -- ASN 59:O 
+    #atoms within 4 Ang = 21
+CDR_H3
+-------
+  N : found at residue 100
+    Abs SASA ASN 100 = 56.75 
+    %   SASA ASN 100 = 28.23 
+    hbond ASN 100:N -- GLU 103:O 
+    #atoms within 4 Ang = 15
+  W : found at residue 101
+    Abs SASA TRP 101 = 211.98 
+    %   SASA TRP 101 = 65.57 
+    No hbonds found
+    #atoms within 4 Ang = 16
+    NWS found starting at residue 100
+      %SASA ASN 100 = 28.23 
+      hbond ASN 100:N -- GLU 103:O      number of neighbors = 15
+
+CDR_L1
+-------
+CDR_L2
+-------
+  N : found at residue 53
+    Abs SASA ASN 53 = 63.88 
+    %   SASA ASN 53 = 31.78 
+    hbond TYR 49:N -- ASN 53:O 
+    #atoms within 4 Ang = 30
+CDR_L3
+-------
+
+
+---------------------------PTM SUMMARY--------------------------------------------------------
+PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
+----------------------------------------------------------------------------------------------
+glyco     CDR_H3      NWS        ASN100       56.7      28.2        15			   -        hi  
+oxida     CDR_H3      W          TRP101      212.0      65.6        16			   -        hi  
+----------------------------------------------------------------------------------
+ Note: (1) Half life (in days) is of Asparagine deamidation

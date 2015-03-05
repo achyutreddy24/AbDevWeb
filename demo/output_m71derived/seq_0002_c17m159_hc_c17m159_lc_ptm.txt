@@ -1,0 +1,71 @@
+Post-Translation Modification Risk Report
+=========================================
+Filename : output_m71derived/seq_0002_c17m159_hc_c17m159_lc_ptm.txt 
+ 
+Light  chain: 
+EIVLTQSPATLSLSPGERATLSCRASQSVSDFLAWYQQKPGQAPRLLIYD  
+ASNRATGIPARFSGSGSGTDFTLTISSLEPEDFAVYYCQQGISAPLTFGQGTKVEIK  
+.........1.........2.........3.........4.........5  
+Heavy  chain :   
+QVQLVQSGAEVKKPGSSVKVSCKASGGTFSDYWISWVRQAPGQGLEWMGD  
+IYPTSGTADYAQKFQGRVTITADESTSTAYMELSSLRSEDTAVYYCARESWSELDYWGQGTLVTVS  
+.........1.........2.........3.........4.........5  
+ 
+------------- CDRs ----------------- 
+  CDR definition = CCG 
+  Number of flanking residues = 1 
+    (residue numbers exclude flanking residues) 
+
+CDR_H1  26 - 35  : S  GGTFSDYWIS  W  
+CDR_H2  50 - 66  : G  DIYPTSGTADYAQKFQG  R  
+CDR_H3  99 - 106 : R  ESWSELDY  W  
+CDR_L1  24 - 34  : C  RASQSVSDFLA  W  
+CDR_L2  50 - 56  : Y  DASNRAT  G  
+CDR_L3  89 - 97  : C  QQGISAPLT  F  
+
+----------------PTM Motif Analysis-------------------------
+
+Motifs scanned: 
+  deamidation   - NG (strongest), NS , NH , NA
+  isomerization - DS, DG  
+  cleavage      - DP  
+  glycosylation - N[^P][S/T]  
+  oxidation     - W, M 
+  cysteine      - C 
+
+CDR_H1
+-------
+  W : found at residue 33
+    Abs SASA TRP 33 = 135.16 
+    %   SASA TRP 33 = 41.81 
+    hbond GLU 99:N -- TRP 33:O 
+    #atoms within 4 Ang = 28
+CDR_H2
+-------
+CDR_H3
+-------
+  W : found at residue 101
+    Abs SASA TRP 101 = 174.96 
+    %   SASA TRP 101 = 54.11 
+    No hbonds found
+    #atoms within 4 Ang = 17
+CDR_L1
+-------
+CDR_L2
+-------
+  N : found at residue 53
+    Abs SASA ASN 53 = 72.30 
+    %   SASA ASN 53 = 35.96 
+    hbond TYR 49:N -- ASN 53:O 
+    #atoms within 4 Ang = 24
+CDR_L3
+-------
+
+
+---------------------------PTM SUMMARY--------------------------------------------------------
+PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
+----------------------------------------------------------------------------------------------
+oxida     CDR_H1      W          TRP33       135.2      41.8        28			   -        med 
+oxida     CDR_H3      W          TRP101      175.0      54.1        17			   -        hi  
+----------------------------------------------------------------------------------
+ Note: (1) Half life (in days) is of Asparagine deamidation

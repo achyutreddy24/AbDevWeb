@@ -1,0 +1,76 @@
+Post-Translation Modification Risk Report
+=========================================
+Filename : output_m71derived/seq_0005_c17m162_hc_c17m162_lc_ptm.txt 
+ 
+Light  chain: 
+EIVLTQSPATLSLSPGERATLSCRASQSVSDFLAWYQQKPGQAPRLLIYD  
+ASNRATGIPARFSGSGSGTDFTLTISSLEPEDFAVYYCQQGISAPLTFGQGTKVEIK  
+.........1.........2.........3.........4.........5  
+Heavy  chain :   
+QLVQSGAEVKKPGSSVKVSCKASGGTFSEYYISWVRQAPGQGLEWMGDID  
+WASGDANYAQKFQGRVTITADESTSTAYMELSSLRSEDTAVYYCARESWSELDYWGQGTLVTVS  
+.........1.........2.........3.........4.........5  
+ 
+------------- CDRs ----------------- 
+  CDR definition = CCG 
+  Number of flanking residues = 1 
+    (residue numbers exclude flanking residues) 
+
+CDR_H1  24 - 33  : S  GGTFSEYYIS  W  
+CDR_H2  48 - 64  : G  DIDWASGDANYAQKFQG  R  
+CDR_H3  97 - 104 : R  ESWSELDY  W  
+CDR_L1  24 - 34  : C  RASQSVSDFLA  W  
+CDR_L2  50 - 56  : Y  DASNRAT  G  
+CDR_L3  89 - 97  : C  QQGISAPLT  F  
+
+----------------PTM Motif Analysis-------------------------
+
+Motifs scanned: 
+  deamidation   - NG (strongest), NS , NH , NA
+  isomerization - DS, DG  
+  cleavage      - DP  
+  glycosylation - N[^P][S/T]  
+  oxidation     - W, M 
+  cysteine      - C 
+
+CDR_H1
+-------
+CDR_H2
+-------
+  N : found at residue 57
+    Abs SASA ASN 57 = 61.92 
+    %   SASA ASN 57 = 30.80 
+    hbond ASP 48:N -- ASN 57:O 
+    #atoms within 4 Ang = 19
+  W : found at residue 51
+    Abs SASA TRP 51 = 40.55 
+    %   SASA TRP 51 = 12.54 
+    No hbonds found
+    #atoms within 4 Ang = 35
+CDR_H3
+-------
+  W : found at residue 99
+    Abs SASA TRP 99 = 196.32 
+    %   SASA TRP 99 = 60.72 
+    No hbonds found
+    #atoms within 4 Ang = 17
+CDR_L1
+-------
+CDR_L2
+-------
+  N : found at residue 53
+    Abs SASA ASN 53 = 71.42 
+    %   SASA ASN 53 = 35.52 
+    hbond TYR 49:N -- ASN 53:O 
+    #atoms within 4 Ang = 25
+CDR_L3
+-------
+
+
+---------------------------PTM SUMMARY--------------------------------------------------------
+PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
+----------------------------------------------------------------------------------------------
+oxida     CDR_H2      W          TRP51        40.6      12.5        35			   -        low 
+oxida     CDR_H3      W          TRP99       196.3      60.7        17			   -        hi  
+----------------------------------------------------------------------------------
+ Note: (1) Half life (in days) is of Asparagine deamidation

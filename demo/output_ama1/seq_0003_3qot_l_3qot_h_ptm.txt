@@ -1,0 +1,86 @@
+Post-Translation Modification Risk Report
+=========================================
+Filename : output_ama1/seq_0003_3qot_l_3qot_h_ptm.txt 
+ 
+Light  chain: 
+XDIVMTQSPDSLAVSLGERATINXKSSQSVLYSSNNKNYLAWYQQKPGQP  
+PKLLIYWASTRESGVPDRFSGSGSGTDFTLTISSLQAEDVAVYYXQQYYSTPLTFGQGTKVEIK  
+.........1.........2.........3.........4.........5  
+Heavy  chain :   
+VQLVQSGAEVKKPGSSVKVSXKASGGTFSSYAISWVRQAPGQGLEWMGGI  
+IPIFGTANYAQKFQGRVTITADESTSTAYMELSSLRSEDTAVYYXARYDGIYGELDFWGQGTLVTVS  
+.........1.........2.........3.........4.........5  
+ 
+------------- CDRs ----------------- 
+  CDR definition = CCG 
+  Number of flanking residues = 1 
+    (residue numbers exclude flanking residues) 
+
+CDR_H1  25 - 34  : S  GGTFSSYAIS  W  
+CDR_H2  49 - 65  : G  GIIPIFGTANYAQKFQG  R  
+CDR_H3  98 - 107 : R  YDGIYGELDF  W  
+CDR_L1  25 - 41  : X  KSSQSVLYSSNNKNYLA  W  
+CDR_L2  57 - 63  : Y  WASTRES  G  
+CDR_L3  96 - 104 : X  QQYYSTPLT  F  
+
+----------------PTM Motif Analysis-------------------------
+
+Motifs scanned: 
+  deamidation   - NG (strongest), NS , NH , NA
+  isomerization - DS, DG  
+  cleavage      - DP  
+  glycosylation - N[^P][S/T]  
+  oxidation     - W, M 
+  cysteine      - C 
+
+CDR_H1
+-------
+CDR_H2
+-------
+  N : found at residue 58
+    Abs SASA ASN 58 = 63.99 
+    %   SASA ASN 58 = 31.83 
+    hbond GLY 49:N -- ASN 58:O 
+    #atoms within 4 Ang = 20
+CDR_H3
+-------
+  DG : found at residue 99
+    Abs SASA ASP 99 = 25.90 
+    %   SASA ASP 99 = 13.32 
+    No hbonds found
+    #atoms within 4 Ang = 23
+CDR_L1
+-------
+  N : found at residue 35
+    Abs SASA ASN 35 = 84.25 
+    %   SASA ASN 35 = 41.91 
+    No hbonds found
+    #atoms within 4 Ang = 20
+  N : found at residue 36
+    Abs SASA ASN 36 = 125.36 
+    %   SASA ASN 36 = 62.36 
+    hbond ASN 36:N -- TYR 32:O 
+    #atoms within 4 Ang = 15
+  N : found at residue 38
+    Abs SASA ASN 38 = 13.41 
+    %   SASA ASN 38 = 6.67 
+    hbond GLY 75:N -- ASN 38:OD1 
+    #atoms within 4 Ang = 33
+CDR_L2
+-------
+  W : found at residue 57
+    Abs SASA TRP 57 = 68.78 
+    %   SASA TRP 57 = 21.27 
+    hbond SER 59:N -- TRP 57:O 
+    #atoms within 4 Ang = 24
+CDR_L3
+-------
+
+
+---------------------------PTM SUMMARY--------------------------------------------------------
+PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
+----------------------------------------------------------------------------------------------
+isomer    CDR_H3      DG         ASP99        25.9      13.3        23			   -        med 
+oxida     CDR_L2      W          TRP57        68.8      21.3        24			   -        med 
+----------------------------------------------------------------------------------
+ Note: (1) Half life (in days) is of Asparagine deamidation
