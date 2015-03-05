@@ -934,7 +934,7 @@ TablesFinal = makeHTML()
 Base = BaseHTML
 if args.phylo:
     PH = PhyloHeader
-    PB = PhyloBody.format(phylo1=FolderPATH+"FirstChain.png", phylo2=FolderPATH+"SecondChain.png")
+    PB = PhyloBody.format(phylo1="FirstChain.png", phylo2="SecondChain.png")
 else:
     PH = ''
     PB = ''
