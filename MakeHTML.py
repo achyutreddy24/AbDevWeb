@@ -805,25 +805,26 @@ def makeHTML():
         if args.germ:
             germ_lc_path = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_germlc.fst".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
             germ_hc_path = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_germhc.fst".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
-           
+            
             germ_lc = getGermData(germ_lc_path)
             germ_hc = getGermData(germ_hc_path)
-           
+            
             diff_lc = findDiff(germ_lc)
             diff_hc = findDiff(germ_hc)
-           
+            
             germ_lc_indexDict = {}
             germ_hc_indexDict = {}
-           
-                       
+            
+                        
             for index in diff_lc[0]:
                 germ_lc_indexDict[index] = "#FF0000"
             for index in diff_hc[0]:
                 germ_hc_indexDict[index] = "#FF0000"
-               
+                
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict)
             LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]], Count=germ_lc[germ_lc["Seq"]].count('<span style="background-color: #ff0000">')))
+            LC_GERM_TABLE_UNSORTED = []
             if germ_lc["Seq"] in germ_lc: del germ_lc[germ_lc["Seq"]]
             if "Seq" in germ_lc: del germ_lc["Seq"]
             custom_indexDict = germ_lc_indexDict
@@ -840,14 +841,19 @@ def makeHTML():
                     germ_lc[key] = highlightLetter(germ_lc[key], custom_indexDict, highlights=highlights)
                 else:
                     continue
-                vPrint("Key is: "+key)
+                print("Key is: "+key)
                 try:
-                    LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key], Count=germ_lc[key].count('<span style="background-color: #ff0000">')))
+                    count = germ_lc[key].count('<span style="background-color: #ff0000">')
+                    LC_GERM_TABLE_UNSORTED.append([count, GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key], Count=count)])
                 except Exception as e:
                     vPrint("Key Error, Key is ("+key+"), it might be blank")
+            for t in sorted(LC_GERM_TABLE_UNSORTED, key=lambda x: x[0]):
+                LC_GERM_TABLE.append(t[1])
+            
             HC_GERM_TABLE = []
             germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
             HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]], Count=germ_hc[germ_hc["Seq"]].count('<span style="background-color: #ff0000">')))
+            HC_GERM_TABLE_UNSORTED = []
             if germ_hc["Seq"] in germ_hc: del germ_hc[germ_hc["Seq"]]
             if "Seq" in germ_hc: del germ_hc["Seq"]
             custom_indexDict = germ_hc_indexDict
@@ -864,15 +870,16 @@ def makeHTML():
                 else:
                     continue
                 try:
-                   
-                   
-                    HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key], Count=germ_hc[key].count('<span style="background-color: #ff0000">')))
+                    count = germ_hc[key].count('<span style="background-color: #ff0000">')
+                    HC_GERM_TABLE_UNSORTED.append([count, GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key], Count=count)])
                 except Exception as e:
                     vPrint("Key Error, Key is ("+key+"), it might be blank")
+            for t in sorted(HC_GERM_TABLE_UNSORTED, key=lambda x: x[0]):
+                HC_GERM_TABLE.append(t[1])
 
             GERM_LC = "\n".join(LC_GERM_TABLE)
             GERM_HC = "\n".join(HC_GERM_TABLE)
-           
+            
             Germ_html = GermHTML.format(LCGermTable=GERM_LC, HCGermTable=GERM_HC)
         
         #Creates path for images
