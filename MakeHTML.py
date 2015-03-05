@@ -128,16 +128,16 @@ SectionHTML = """
 GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0>
 
             <h2 style="font: 16pt Times New Roman" align=center><td><b>LC</b></h2>
-            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
+            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td><td>Count</td></tr>
             {LCGermTable}
             
             <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>HC</b></h2>
-            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td></tr>
+            <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td><td>Count</td></tr>
             {HCGermTable}
             </table>
             """
             
-GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td></tr>"""
+GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td><td align=left style="font-family: Courier New">{Count}</td></tr>"""
 
 
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
@@ -458,8 +458,10 @@ def getGermData(fileName):
     seq_dict = dict()
 
     for n in range(0,len(all_list),2):
-        seq_dict[all_list[n][1:].strip().lower()] = all_list[n+1]
-
+        try:
+            seq_dict[all_list[n][1:].strip().lower()] = all_list[n+1]
+        except Exception as e:
+            vPrint("Error getting germline data")
     seq_dict["Seq"] = all_list[0][1:].strip().lower()
     return seq_dict
     
@@ -566,12 +568,16 @@ def makeString(num):
         num = "" + num
     return num
     
-def highlightLetter(str, indexDict):
+def highlightLetter(str, indexDict, highlight=False):
     htmSecondChainColor = '<font color="{Color}">{Letter}</font>'
+    htmBackgroundColor = '<span style="background-color: {Color}">{Letter}</span>'
     newStrlst = []
     for x in range(len(str)):
         if x in indexDict:
-            newHTML = htmSecondChainColor.format(Color = indexDict[x], Letter = str[x])
+            if highlight is True:
+                newHTML = htmBackgroundColor.format(Color = indexDict[x], Letter = str[x])
+            if highlight is False:
+                newHTML = htmSecondChainColor.format(Color = indexDict[x], Letter = str[x])
             newStrlst.append(newHTML)
         else:
             newStrlst.append(str[x])
@@ -811,29 +817,55 @@ def makeHTML():
                 
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict)
-            LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]]))
+            LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]], Count=germ_lc[germ_lc["Seq"]].count('<span style="background-color: #ff0000">')))
             if germ_lc["Seq"] in germ_lc: del germ_lc[germ_lc["Seq"]]
             if "Seq" in germ_lc: del germ_lc["Seq"]
+            custom_indexDict = germ_lc_indexDict
             for key in germ_lc:
                 if key is not "Seq":
-                    germ_lc[key] = highlightLetter(germ_lc[key], germ_lc_indexDict)
+                    highlight=False
+                    if key in diff_lc[1]:
+                        indexes = diff_lc[1][key]
+                        for k in custom_indexDict:
+                            highlight=False
+                            if k in indexes:
+                                custom_indexDict[k] = "#ff0000"
+                                highlight=True
+                            else:
+                                highlight=False
+                    germ_lc[key] = highlightLetter(germ_lc[key], custom_indexDict, highlight)
                 else:
                     continue
-                    
-                LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key]))
+                print("Key is: "+key)
+                try:
+                    LC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key], Count=germ_lc[key].count('<span style="background-color: #ff0000">')))
+                except Exception as e:
+                    vPrint("Key Error, Key is ("+key+"), it might be blank")
             HC_GERM_TABLE = []
             germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
-            HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]]))
+            HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]], Count=germ_hc[germ_hc["Seq"]].count('<span style="background-color: #ff0000">')))
             if germ_hc["Seq"] in germ_hc: del germ_hc[germ_hc["Seq"]]
             if "Seq" in germ_hc: del germ_hc["Seq"]
+            custom_indexDict = germ_hc_indexDict
             for key in germ_hc:
                 if key is not "Seq":
-                    germ_hc[key] = highlightLetter(germ_hc[key], germ_hc_indexDict)
+                    high=False
+                    if key in diff_hc[1]:
+                        indexes = diff_hc[1][key]
+                        for k in custom_indexDict:
+                            high=False
+                            if k in indexes:
+                                custom_indexDict[k] = "#ff0000"
+                                high=True
+                            else:
+                                high=False
+                    germ_hc[key] = highlightLetter(germ_hc[key], custom_indexDict, high)
                 else:
                     continue
-                
-                HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key]))
-                
+                try:
+                    HC_GERM_TABLE.append(GermRow.format(Name=key.split("|")[1], Sequence=germ_hc[key], Count=germ_hc[key].count('<span style="background-color: #ff0000">')))
+                except Exception as e:
+                    vPrint("Key Error, Key is ("+key+"), it might be blank")
             GERM_LC = "\n".join(LC_GERM_TABLE)
             GERM_HC = "\n".join(HC_GERM_TABLE)
             
