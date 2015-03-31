@@ -390,8 +390,8 @@ def makePhylo():
     firstTree = Phylo.read('FirstChain.dnd', 'newick')
     secondTree = Phylo.read('SecondChain.dnd', 'newick')
     
-    draw(firstTree, fileName=FolderPATH+'FirstChain.png')
-    draw(secondTree, fileName=FolderPATH+'SecondChain.png')
+    draw(firstTree, fileName='FirstChain.png')
+    draw(secondTree, fileName='SecondChain.png')
 
 
 #Gets sequences and FirstChain and SecondChain name from all .fst files
