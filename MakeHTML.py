@@ -157,7 +157,7 @@ HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqN
 PTMSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{PTMype}</td><td>{CDRLabel}</td><td>{Motif}</td><td>{Residue}</td><td>{SASA}</td><td>{PSASA}</td><td>{Neigh}</td><td>{HalfLife}</td><td>{Risk}</td></tr>
 """
 
-HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>1{Num}</td><td>{SAP_AREA}</td><td>{SASA}</td><td>{PSASA}</td><td>{HYD_RES_SASA}</td><td>{HYD_RESIDUES}</td></tr>
+HYDSummaryHTML = """<tr  bgcolor="{Color}" align=center><td>{Risk}</td><td>{Num}</td><td>{SAP_AREA}</td><td>{SASA}</td><td>{PSASA}</td><td>{HYD_RES_SASA}</td><td>{HYD_RESIDUES}</td></tr>
 """
 
 
