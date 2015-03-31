@@ -568,11 +568,12 @@ def makeString(num):
         num = "" + num
     return num
     
-def highlightLetter(str, indexDict, highlight=False, highlights = None):
+def highlightLetter(str, indexDict, highlight=False, highlights = None, start=[], end=[]):
     htmSecondChainColor = '<font color="{Color}">{Letter}</font>'
     htmBackgroundColor = '<span style="background-color: {Color}">{Letter}</span>'
     newStrlst = []
     for x in range(len(str)):
+        newHTML=str[x]
         if x in indexDict:
             if highlights is None:
                 if highlight:
@@ -584,9 +585,13 @@ def highlightLetter(str, indexDict, highlight=False, highlights = None):
                     newHTML = htmBackgroundColor.format(Color = indexDict[x], Letter = str[x])
                 else:
                     newHTML = htmSecondChainColor.format(Color = indexDict[x], Letter = str[x])
-            newStrlst.append(newHTML)
-        else:
-            newStrlst.append(str[x])
+        if x in start:
+            print('UNDERLINED')
+            newHTML = '<u>'+newHTML
+        if x in end:
+            newHTML = newHTML+'</u>'
+        newStrlst.append(newHTML)
+            
     newStr = "".join(newStrlst)
     return newStr
 
@@ -821,8 +826,14 @@ def makeHTML():
             for index in diff_hc[0]:
                 germ_hc_indexDict[index] = "#FF0000"
                 
+            lc_start = [int(CDRs["L1"][0].split(" - ")[0]), int(CDRs["L2"][0].split(" - ")[0])]
+            lc_end = [int(CDRs["L1"][0].split(" - ")[1]), int(CDRs["L2"][0].split(" - ")[1])]
+            
+            hc_start = [int(CDRs["H1"][0].split(" - ")[0]), int(CDRs["H2"][0].split(" - ")[0])]
+            hc_end = [int(CDRs["H1"][0].split(" - ")[1]), int(CDRs["H2"][0].split(" - ")[1])]
+                
             LC_GERM_TABLE = []
-            germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict)
+            germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict, start=lc_start, end=lc_end)
             LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]], Count=germ_lc[germ_lc["Seq"]].count('<span style="background-color: #ff0000">')))
             LC_GERM_TABLE_UNSORTED = []
             if germ_lc["Seq"] in germ_lc: del germ_lc[germ_lc["Seq"]]
@@ -838,7 +849,7 @@ def makeHTML():
                             if k in indexes:
                                 custom_indexDict[k] = "#ff0000"
                                 highlights.append(k)
-                    germ_lc[key] = highlightLetter(germ_lc[key], custom_indexDict, highlights=highlights)
+                    germ_lc[key] = highlightLetter(germ_lc[key], custom_indexDict, highlights=highlights, start=lc_start, end=lc_end)
                 else:
                     continue
                 print("Key is: "+key)
@@ -851,7 +862,7 @@ def makeHTML():
                 LC_GERM_TABLE.append(t[1])
             
             HC_GERM_TABLE = []
-            germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict)
+            germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict, start=lc_start, end=lc_end)
             HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]], Count=germ_hc[germ_hc["Seq"]].count('<span style="background-color: #ff0000">')))
             HC_GERM_TABLE_UNSORTED = []
             if germ_hc["Seq"] in germ_hc: del germ_hc[germ_hc["Seq"]]
@@ -866,7 +877,7 @@ def makeHTML():
                             if k in indexes:
                                 custom_indexDict[k] = "#ff0000"
                                 highlights.append(k)
-                    germ_hc[key] = highlightLetter(germ_hc[key], custom_indexDict, highlights=highlights)
+                    germ_hc[key] = highlightLetter(germ_hc[key], custom_indexDict, highlights=highlights, start=lc_start, end=lc_end)
                 else:
                     continue
                 try:
@@ -934,7 +945,7 @@ TablesFinal = makeHTML()
 Base = BaseHTML
 if args.phylo:
     PH = PhyloHeader
-    PB = PhyloBody.format(phylo1=FolderPATH+"FirstChain.png", phylo2=FolderPATH+"SecondChain.png")
+    PB = PhyloBody.format(phylo1="FirstChain.png", phylo2="SecondChain.png")
 else:
     PH = ''
     PB = ''
