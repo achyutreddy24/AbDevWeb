@@ -827,14 +827,18 @@ def makeHTML():
             for index in diff_hc[0]:
                 germ_hc_indexDict[index] = "#FF0000"
                
-            lc_start = [int(CDRs["L1"][0].split(" - ")[0]), int(CDRs["L2"][0].split(" - ")[0])]
-            lc_end = [int(CDRs["L1"][0].split(" - ")[1]), int(CDRs["L2"][0].split(" - ")[1])]
+           # lc_start = [int(CDRs["L1"][0].split(" - ")[0]), int(CDRs["L2"][0].split(" - ")[0])]
+           # lc_end = [int(CDRs["L1"][0].split(" - ")[1]), int(CDRs["L2"][0].split(" - ")[1])]
+           # 
+           # hc_start = [int(CDRs["H1"][0].split(" - ")[0]), int(CDRs["H2"][0].split(" - ")[0])]
+           # hc_end = [int(CDRs["H1"][0].split(" - ")[1]), int(CDRs["H2"][0].split(" - ")[1])]
             
-            hc_start = [int(CDRs["H1"][0].split(" - ")[0]), int(CDRs["H2"][0].split(" - ")[0])]
-            hc_end = [int(CDRs["H1"][0].split(" - ")[1]), int(CDRs["H2"][0].split(" - ")[1])]
+            lc_start = [germ_lc[germ_lc["Seq"]].index(CDRs["L1"][1]),germ_lc[germ_lc["Seq"]].index(CDRs["L2"][1])]
+            lc_end   = [germ_lc[germ_lc["Seq"]].index(CDRs["L1"][1])+len(CDRs["L1"][1])-1,germ_lc[germ_lc["Seq"]].index(CDRs["L2"][1])+len(CDRs["L2"][1])-1]
+            
+            hc_start = [germ_hc[germ_hc["Seq"]].index(CDRs["H1"][1]),germ_hc[germ_hc["Seq"]].index(CDRs["H2"][1])]
+            hc_end =   [germ_hc[germ_hc["Seq"]].index(CDRs["H1"][1])+len(CDRs["H1"][1])-1,germ_hc[germ_hc["Seq"]].index(CDRs["H2"][1])+len(CDRs["H2"][1])-1]
 
-            print(lc_start)
-                
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict, start=lc_start, end=lc_end)
             LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]], Count=germ_lc[germ_lc["Seq"]].count('<span style="background-color: #ff0000">')))
