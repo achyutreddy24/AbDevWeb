@@ -832,6 +832,8 @@ def makeHTML():
             
             hc_start = [int(CDRs["H1"][0].split(" - ")[0]), int(CDRs["H2"][0].split(" - ")[0])]
             hc_end = [int(CDRs["H1"][0].split(" - ")[1]), int(CDRs["H2"][0].split(" - ")[1])]
+
+            print(lc_start)
                 
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict, start=lc_start, end=lc_end)
