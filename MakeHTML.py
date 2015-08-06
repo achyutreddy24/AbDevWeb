@@ -390,8 +390,8 @@ def makePhylo():
     firstTree = Phylo.read('FirstChain.dnd', 'newick')
     secondTree = Phylo.read('SecondChain.dnd', 'newick')
     
-    draw(firstTree, fileName=FolderPATH+'FirstChain.png')
-    draw(secondTree, fileName=FolderPATH+'SecondChain.png')
+    draw(firstTree, fileName='FirstChain.png')
+    draw(secondTree, fileName='SecondChain.png')
 
 
 #Gets sequences and FirstChain and SecondChain name from all .fst files
@@ -551,9 +551,10 @@ def makeFullFastaFiles(SeqDict):
 def makeAlignment(fstFileName):
     #subprocess.call("cd ClustalO")
     try:
-        subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --distmat-out={fileName}distmattest.txt --force --full".format(fileName=fstFileName))
-    except:
-        print("Error make sure ClustalO is installed in the ClustalO subfolder")
+        subprocess.call("clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --distmat-out={fileName}distmattest.txt --force --full".format(fileName=fstFileName), shell=True)
+    except exception as e:
+        print(e)
+        print("Error make sure ClustalO is installed")
     
 def makeString(num):
     """Turns the sequence number into a string and adds zeros"""
@@ -625,14 +626,15 @@ def makeHTML():
         vPrint("Sequence info"+" "+Sequences[SeqNum]["FirstChain"]+" "+Sequences[SeqNum]["SecondChain"])
         CDRName = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         print("CDR is ",Sequences[SeqNum]["SecondChain"])
-        
+       
         try:
             CDRs = getCDR(CDRName)
+            print(CDRs)
         except Exception as e:
             vPrint("Error reading CDRs, continuing")
             vPrint(e)
             continue
-        
+       
         #These variables are for risk counters in first table
         HPTMRiskTypes = []
         MPTMRiskTypes = []
@@ -820,18 +822,17 @@ def makeHTML():
             germ_lc_indexDict = {}
             germ_hc_indexDict = {}
             
-                        
             for index in diff_lc[0]:
                 germ_lc_indexDict[index] = "#FF0000"
             for index in diff_hc[0]:
                 germ_hc_indexDict[index] = "#FF0000"
-                
-            lc_start = [int(CDRs["L1"][0].split(" - ")[0]), int(CDRs["L2"][0].split(" - ")[0])]
-            lc_end = [int(CDRs["L1"][0].split(" - ")[1]), int(CDRs["L2"][0].split(" - ")[1])]
             
-            hc_start = [int(CDRs["H1"][0].split(" - ")[0]), int(CDRs["H2"][0].split(" - ")[0])]
-            hc_end = [int(CDRs["H1"][0].split(" - ")[1]), int(CDRs["H2"][0].split(" - ")[1])]
-                
+            lc_start = [germ_lc[germ_lc["Seq"]].index(CDRs["L1"][1]),germ_lc[germ_lc["Seq"]].index(CDRs["L2"][1])]
+            lc_end   = [germ_lc[germ_lc["Seq"]].index(CDRs["L1"][1])+len(CDRs["L1"][1])-1,germ_lc[germ_lc["Seq"]].index(CDRs["L2"][1])+len(CDRs["L2"][1])-1]
+            
+            hc_start = [germ_hc[germ_hc["Seq"]].index(CDRs["H1"][1]),germ_hc[germ_hc["Seq"]].index(CDRs["H2"][1])]
+            hc_end =   [germ_hc[germ_hc["Seq"]].index(CDRs["H1"][1])+len(CDRs["H1"][1])-1,germ_hc[germ_hc["Seq"]].index(CDRs["H2"][1])+len(CDRs["H2"][1])-1]
+
             LC_GERM_TABLE = []
             germ_lc[germ_lc["Seq"]] = highlightLetter(germ_lc[germ_lc["Seq"]], germ_lc_indexDict, start=lc_start, end=lc_end)
             LC_GERM_TABLE.append(GermRow.format(Name=germ_lc["Seq"], Sequence=germ_lc[germ_lc["Seq"]], Count=germ_lc[germ_lc["Seq"]].count('<span style="background-color: #ff0000">')))
@@ -862,7 +863,7 @@ def makeHTML():
                 LC_GERM_TABLE.append(t[1])
             
             HC_GERM_TABLE = []
-            germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict, start=lc_start, end=lc_end)
+            germ_hc[germ_hc["Seq"]] = highlightLetter(germ_hc[germ_hc["Seq"]], germ_hc_indexDict, start=hc_start, end=hc_end)
             HC_GERM_TABLE.append(GermRow.format(Name=germ_hc["Seq"], Sequence=germ_hc[germ_hc["Seq"]], Count=germ_hc[germ_hc["Seq"]].count('<span style="background-color: #ff0000">')))
             HC_GERM_TABLE_UNSORTED = []
             if germ_hc["Seq"] in germ_hc: del germ_hc[germ_hc["Seq"]]
@@ -877,7 +878,7 @@ def makeHTML():
                             if k in indexes:
                                 custom_indexDict[k] = "#ff0000"
                                 highlights.append(k)
-                    germ_hc[key] = highlightLetter(germ_hc[key], custom_indexDict, highlights=highlights, start=lc_start, end=lc_end)
+                    germ_hc[key] = highlightLetter(germ_hc[key], custom_indexDict, highlights=highlights, start=hc_start, end=hc_end)
                 else:
                     continue
                 try:
