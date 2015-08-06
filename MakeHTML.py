@@ -551,9 +551,10 @@ def makeFullFastaFiles(SeqDict):
 def makeAlignment(fstFileName):
     #subprocess.call("cd ClustalO")
     try:
-        subprocess.call("ClustalO\clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --distmat-out={fileName}distmattest.txt --force --full".format(fileName=fstFileName))
-    except:
-        print("Error make sure ClustalO is installed in the ClustalO subfolder")
+        subprocess.call("clustalo -i {fileName}.fst --guidetree-out={fileName}.dnd --distmat-out={fileName}distmattest.txt --force --full".format(fileName=fstFileName), shell=True)
+    except exception as e:
+        print(e)
+        print("Error make sure ClustalO is installed")
     
 def makeString(num):
     """Turns the sequence number into a string and adds zeros"""
