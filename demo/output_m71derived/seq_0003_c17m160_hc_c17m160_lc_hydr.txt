@@ -26,7 +26,7 @@ CDR_L3  89 - 97  :  QQGISAPLT
 ---------Hydrophobic Patch Analysis-------------------------
 
 SAP analysis parameters: 
-    sap radius = 5 A
+    sap radius = 10 A
     strictness = 0.07 
 
 Solvent exposed area of the full protein = 10279.9 A^2
@@ -36,70 +36,44 @@ PATCH 1
 CDR Label    Residue      SASA        %relative SASA 
 -----------------------------------------------------
 CDR_L1       PHE32        50.50            18.35
-CDR_L3       ILE92        79.60            34.67
+CDR_H1       TYR32        105.64            35.40
+Non_CDR       ARG98        26.71            8.86
+CDR_H3       GLU99        16.51            7.24
+CDR_H3       SER100        60.96            36.18
 CDR_H3       TRP101        205.63            63.60
 CDR_H3       SER102        10.49            6.23
+CDR_H3       GLU103        0.00            0.00
+CDR_H3       ASP105        42.56            21.89
+CDR_H3       TYR106        102.52            34.36
 
-Total Patch SASA  : 346.23 
-    % protein SASA  : 3.37 
+Total Patch SASA  : 621.54 
+    % protein SASA  : 6.05 
 
 PATCH 2 
 --------
 CDR Label    Residue      SASA        %relative SASA 
 -----------------------------------------------------
-Non_CDR       VAL2        77.99            38.99
-Non_CDR       GLN3        75.19            32.04
-Non_CDR       ARG98        26.71            8.86
-CDR_H3       ASP105        42.56            21.89
-CDR_H3       TYR106        102.52            34.36
-
-Total Patch SASA  : 324.97 
-    % protein SASA  : 3.16 
-
-PATCH 3 
---------
-CDR Label    Residue      SASA        %relative SASA 
------------------------------------------------------
-Non_CDR       PRO15        63.74            33.02
-Non_CDR       PRO80        97.26            50.38
-Non_CDR       PHE83        21.56            7.83
-Non_CDR       ILE106        106.45            46.37
-Non_CDR       LYS107        202.95            75.28
-
-Total Patch SASA  : 491.96 
-    % protein SASA  : 4.79 
-
-PATCH 4 
---------
-CDR Label    Residue      SASA        %relative SASA 
------------------------------------------------------
 Non_CDR       ALA9        81.07            59.79
 Non_CDR       GLU10        44.87            19.68
+Non_CDR       VAL11        116.41            58.20
+Non_CDR       GLN39        20.85            8.89
 Non_CDR       PRO41        100.55            52.08
 Non_CDR       THR91        26.15            13.44
 Non_CDR       ALA92        0.00            0.00
 Non_CDR       VAL93        34.30            17.15
+Non_CDR       TYR95        5.15            1.73
+Non_CDR       GLN109        117.21            49.95
+Non_CDR       GLY110        8.73            8.52
+Non_CDR       THR111        2.02            1.04
 Non_CDR       LEU112        82.31            35.21
 Non_CDR       THR114        41.09            21.12
 
-Total Patch SASA  : 410.34 
-    % protein SASA  : 3.99 
-
-PATCH 5 
---------
-CDR Label    Residue      SASA        %relative SASA 
------------------------------------------------------
-Non_CDR       LYS39        62.63            23.23
-Non_CDR       PRO40        139.61            72.31
-Non_CDR       GLY41        92.39            90.13
-
-Total Patch SASA  : 294.63 
-    % protein SASA  : 2.87 
+Total Patch SASA  : 680.71 
+    % protein SASA  : 6.62 
 
 -------------------------HYDROPHOBIC PATCH SUMMARY----------------------------------------------------
 RISK  NUMBER  SAP_AREA    SASA    %SASA      HYD_RES_SASA      HYD_RESIDUES                           
 ------------------------------------------------------------------------------------------------------
-  low    1    171.6  	  346.2      3.4        335.7    l.F32 l.I92 h.W101                                                                                                                                               
-  low    2    132.3  	  325.0      3.2        180.5    h.V2 h.Y106                                                                                                                                                      
+  med    1    233.8  	  621.5      6.0        464.3    l.F32 h.Y32 h.W101 h.Y106                                                                                                                                        
 --------------------------------------------------------------------------------------------------------
 Note: SASA and HYD_RES_SASA are in A^2; %SASA = PATCH_SASA/FAB_SASA % 

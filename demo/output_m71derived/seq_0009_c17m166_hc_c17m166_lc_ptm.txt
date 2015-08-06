@@ -56,10 +56,49 @@ CDR_L2
 CDR_L3
 -------
 
+----------------PTM Motif Analysis in Framework-------------------------
+
+  W : found at residue 35 in chain VL
+    Abs SASA TRP 35 = 0.00 
+    %   SASA TRP 35 = 0.00 
+    hbond ILE 48:N -- TRP 35:O 
+    #atoms within 4 Ang = 37
+  W : found at residue 36 in chain VH
+    Abs SASA TRP 36 = 0.00 
+    %   SASA TRP 36 = 0.00 
+    hbond MET 48:N -- TRP 36:O 
+    #atoms within 4 Ang = 36
+  W : found at residue 47 in chain VH
+    Abs SASA TRP 47 = 1.44 
+    %   SASA TRP 47 = 0.45 
+    No hbonds found
+    #atoms within 4 Ang = 29
+  W : found at residue 107 in chain VH
+    Abs SASA TRP 107 = 25.35 
+    %   SASA TRP 107 = 7.84 
+    No hbonds found
+    #atoms within 4 Ang = 23
+  M : found at residue 48 in chain VH
+    Abs SASA MET 48 = 0.00 
+    %   SASA MET 48 = 0.00 
+    hbond ALA 61:N -- MET 48:O 
+    #atoms within 4 Ang = 26
+  M : found at residue 81 in chain VH
+    Abs SASA MET 81 = 0.00 
+    %   SASA MET 81 = 0.00 
+    hbond VAL 20:N -- MET 81:O 
+    #atoms within 4 Ang = 30
+
 
 ---------------------------PTM SUMMARY--------------------------------------------------------
 PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
 ----------------------------------------------------------------------------------------------
 oxida     CDR_H3      W          TRP101      205.6      63.6        16			   -        hi  
-----------------------------------------------------------------------------------
+oxida     FR_VL       W          TRP35         0.0       0.0        37			   -        low 
+oxida     FR_VH       W          TRP36         0.0       0.0        36			   -        low 
+oxida     FR_VH       W          TRP47         1.4       0.4        29			   -        low 
+oxida     FR_VH       W          TRP107       25.4       7.8        23			   -        low 
+oxida     FR_VH       M          MET48         0.0       0.0        26			   -        low 
+oxida     FR_VH       M          MET81         0.0       0.0        30			   -        low 
+-------------------------------------------------------------------------------------------------
  Note: (1) Half life (in days) is of Asparagine deamidation

@@ -66,11 +66,50 @@ CDR_L2
 CDR_L3
 -------
 
+----------------PTM Motif Analysis in Framework-------------------------
+
+  W : found at residue 35 in chain VL
+    Abs SASA TRP 35 = 0.00 
+    %   SASA TRP 35 = 0.00 
+    hbond ILE 48:N -- TRP 35:O 
+    #atoms within 4 Ang = 35
+  W : found at residue 34 in chain VH
+    Abs SASA TRP 34 = 0.00 
+    %   SASA TRP 34 = 0.00 
+    hbond GLY 47:N -- TRP 34:O 
+    #atoms within 4 Ang = 39
+  W : found at residue 45 in chain VH
+    Abs SASA TRP 45 = 3.16 
+    %   SASA TRP 45 = 0.98 
+    No hbonds found
+    #atoms within 4 Ang = 28
+  W : found at residue 105 in chain VH
+    Abs SASA TRP 105 = 14.58 
+    %   SASA TRP 105 = 4.51 
+    No hbonds found
+    #atoms within 4 Ang = 24
+  M : found at residue 46 in chain VH
+    Abs SASA MET 46 = 0.00 
+    %   SASA MET 46 = 0.00 
+    hbond ARG 36:CD -- MET 46:SD 
+    #atoms within 4 Ang = 29
+  M : found at residue 79 in chain VH
+    Abs SASA MET 79 = 0.00 
+    %   SASA MET 79 = 0.00 
+    hbond VAL 18:N -- MET 79:O 
+    #atoms within 4 Ang = 29
+
 
 ---------------------------PTM SUMMARY--------------------------------------------------------
 PTMTYPE   CDRLabel    MOTIF      RESIDUE    SASA      %SASA     #Neighbors   Half Life      RISK 
 ----------------------------------------------------------------------------------------------
 oxida     CDR_H2      W          TRP51        40.6      12.5        35			   -        low 
 oxida     CDR_H3      W          TRP99       196.3      60.7        17			   -        hi  
-----------------------------------------------------------------------------------
+oxida     FR_VL       W          TRP35         0.0       0.0        35			   -        low 
+oxida     FR_VH       W          TRP34         0.0       0.0        39			   -        low 
+oxida     FR_VH       W          TRP45         3.2       1.0        28			   -        low 
+oxida     FR_VH       W          TRP105       14.6       4.5        24			   -        low 
+oxida     FR_VH       M          MET46         0.0       0.0        29			   -        low 
+oxida     FR_VH       M          MET79         0.0       0.0        29			   -        low 
+-------------------------------------------------------------------------------------------------
  Note: (1) Half life (in days) is of Asparagine deamidation
