@@ -826,12 +826,6 @@ def makeHTML():
                 germ_lc_indexDict[index] = "#FF0000"
             for index in diff_hc[0]:
                 germ_hc_indexDict[index] = "#FF0000"
-               
-           # lc_start = [int(CDRs["L1"][0].split(" - ")[0]), int(CDRs["L2"][0].split(" - ")[0])]
-           # lc_end = [int(CDRs["L1"][0].split(" - ")[1]), int(CDRs["L2"][0].split(" - ")[1])]
-           # 
-           # hc_start = [int(CDRs["H1"][0].split(" - ")[0]), int(CDRs["H2"][0].split(" - ")[0])]
-           # hc_end = [int(CDRs["H1"][0].split(" - ")[1]), int(CDRs["H2"][0].split(" - ")[1])]
             
             lc_start = [germ_lc[germ_lc["Seq"]].index(CDRs["L1"][1]),germ_lc[germ_lc["Seq"]].index(CDRs["L2"][1])]
             lc_end   = [germ_lc[germ_lc["Seq"]].index(CDRs["L1"][1])+len(CDRs["L1"][1])-1,germ_lc[germ_lc["Seq"]].index(CDRs["L2"][1])+len(CDRs["L2"][1])-1]
