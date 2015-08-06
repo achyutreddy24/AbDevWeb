@@ -70,7 +70,7 @@ BaseHTML = """
             
             <table width=820 cellspacing=1 cellpadding=10 border=4>
             <tr align=center><td><b>Seq</b></td><td><b>Chain 1</b></td><td><b>Chain 2</b></td><td><b>L1</b></td><td ><b>L2</b></td><td><b>L3</b></td>
-                                                                                                     <td><b>H1</b></td><td><b>H2</b></td><td><b>H3</b></td><td><b>PTM Risk</b></td><td><b>Aggregate Risk</b></td><td><b>RAW Files</b></td></tr>
+                                                                                                     <td><b>H1</b></td><td><b>H2</b></td><td><b>H3</b></td><td><b>PTM Risk</b></td><td><b>Aggregation Risk</b></td><td><b>RAW Files</b></td></tr>
                                                                                        
             {OpenTable}
             
@@ -111,6 +111,8 @@ SectionHTML = """
             {HYDTable}
             </table>
             
+            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Human Germline Comparison</b></h2>
+
             {GermHTML}            
             <div align=center><A HREF="#top">Back to Top</a></div>
             
@@ -127,17 +129,21 @@ SectionHTML = """
 
 GermHTML = """<table align=center width=820 cellspacing=2 cellpadding=4 border=0>
 
-            <h2 style="font: 16pt Times New Roman" align=center><td><b>LC</b></h2>
+            <h2 style="font: 16pt Times New Roman" align=center><td><b>Light Chain</b></h2>
             <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td><td>Count</td></tr>
             {LCGermTable}
             
-            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>HC</b></h2>
+            <h2 style="font: 16pt Times New Roman" align=center colspan=10><td><b>Heavy Chain</b></h2>
             <tr bgcolor="#C0C0C0" align=center><td>Name</td><td>Sequence</td><td>Count</td></tr>
             {HCGermTable}
             </table>
             """
-            
-GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td><td align=left style="font-family: Courier New">{Count}</td></tr>"""
+
+#   original        
+#GermRow = """<tr bgcolor="#d3d3d3" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td><td align=left style="font-family: Courier New">{Count}</td></tr>"""
+
+# aaaaaa
+GermRow = """<tr bgcolor="#F3F781" align=left style="font-family: Courier New"><td>{Name}</td><td align=left style="font-family: Courier New">{Sequence}</td><td align=left style="font-family: Courier New">{Count}</td></tr>"""
 
 
 HTMLOpening = """<tr align=center><td rowspan=3><A HREF="#Seq{SeqNum}">{DispSeqNum}</A></td><td rowspan=3>{HeavyChain}</td><td rowspan=3>{LightChain}</td></tr>
@@ -390,8 +396,8 @@ def makePhylo():
     firstTree = Phylo.read('FirstChain.dnd', 'newick')
     secondTree = Phylo.read('SecondChain.dnd', 'newick')
     
-    draw(firstTree, fileName='FirstChain.png')
-    draw(secondTree, fileName='SecondChain.png')
+    draw(firstTree, fileName=FolderPATH+'FirstChain.png')
+    draw(secondTree, fileName=FolderPATH+'SecondChain.png')
 
 
 #Gets sequences and FirstChain and SecondChain name from all .fst files
@@ -626,7 +632,7 @@ def makeHTML():
         vPrint("Sequence info"+" "+Sequences[SeqNum]["FirstChain"]+" "+Sequences[SeqNum]["SecondChain"])
         CDRName = FolderPATH+"seq_{Num}_{FirstChain}_{SecondChain}_hydr.txt".format(Num=StringSeqNum, FirstChain=Sequences[SeqNum]["FirstChain"], SecondChain=Sequences[SeqNum]["SecondChain"])
         print("CDR is ",Sequences[SeqNum]["SecondChain"])
-       
+        
         try:
             CDRs = getCDR(CDRName)
             print(CDRs)
@@ -634,7 +640,7 @@ def makeHTML():
             vPrint("Error reading CDRs, continuing")
             vPrint(e)
             continue
-       
+        
         #These variables are for risk counters in first table
         HPTMRiskTypes = []
         MPTMRiskTypes = []
@@ -647,6 +653,7 @@ def makeHTML():
         HighlightPTMlst = []
         for row in PTMSum:
             PTMrawHTML = PTMSummaryHTML
+			
             #If statement sets the color depending on the risk column
             if row[8] == 'hi':
                 riskColor="#FF0000"
@@ -655,8 +662,10 @@ def makeHTML():
                     pass
                 else:
                     HPTMRiskTypes.append(row[0])
-            elif row[8] == 'low':
+            elif row[8] == 'low':			
                 riskColor="#00FF00"
+                if row[1] == 'FR_VL' or row[1] == 'FR_VH':    # ssomani: color framework with very light green  
+                    riskColor="#D1FFA3"					
             else:
                 riskColor="#EEAD0E"
                 #Nested if appends the risktype to a list if its not already in the list
@@ -682,6 +691,9 @@ def makeHTML():
         PTM_L3_dict = dict()
         
         for t in HighlightPTMlst:
+            if t[1] == "FR_VL" or t[1] == "FR_VH":   # 22Jul2015: ignoring framework PTMs. ssomani   
+                continue 
+				
             t[1] = re.sub('CDR_', '', t[1])
             lstRange = CDRs[t[1]][0].split(" - ")
             t[0] = t[0] - int(lstRange[0])
@@ -822,6 +834,7 @@ def makeHTML():
             germ_lc_indexDict = {}
             germ_hc_indexDict = {}
             
+                        
             for index in diff_lc[0]:
                 germ_lc_indexDict[index] = "#FF0000"
             for index in diff_hc[0]:
