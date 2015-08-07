@@ -593,7 +593,7 @@ def highlightLetter(str, indexDict, highlight=False, highlights = None, start=[]
                 else:
                     newHTML = htmSecondChainColor.format(Color = indexDict[x], Letter = str[x])
         if x in start:
-            print('UNDERLINED')
+            vPrint('UNDERLINED')
             newHTML = '<u>'+newHTML
         if x in end:
             newHTML = newHTML+'</u>'
@@ -843,12 +843,12 @@ def makeHTML():
             main_lc_seq = germ_lc[germ_lc["Seq"]]
             lc_start = [re.sub("\.","",main_lc_seq).index(CDRs["L1"][1]),re.sub("\.","",main_lc_seq).index(CDRs["L2"][1])]
             extra = [main_lc_seq[lc_start[0]:lc_start[0]+len(CDRs["L1"][1])].count("."),main_lc_seq[lc_start[1]:lc_start[1]+len(CDRs["L2"][1])].count(".")]
-            lc_end = [lc_start[0]+len(CDRs["L1"][1])-1+extra[0],lc_start[1]+len(CDRs["L2"][1])-1+extra[1]]
+            lc_end = [lc_start[0]+len(CDRs["L1"][1])-1+extra[0],lc_start[1]+len(CDRs["L2"][1])-1+extra[1]+extra[0]]
 
             main_hc_seq = germ_hc[germ_hc["Seq"]]
             hc_start = [re.sub("\.","",main_hc_seq).index(CDRs["H1"][1]),re.sub("\.","",main_hc_seq).index(CDRs["H2"][1])]
             extra = [main_hc_seq[hc_start[0]:hc_start[0]+len(CDRs["H1"][1])].count("."),main_hc_seq[hc_start[0]:hc_start[1]+len(CDRs["H2"][1])].count(".")]
-            hc_end = [hc_start[0]+len(CDRs["H1"][1])-1+extra[0],hc_start[1]+len(CDRs["H2"][1])-1+extra[1]]
+            hc_end = [hc_start[0]+len(CDRs["H1"][1])-1+extra[0],hc_start[1]+len(CDRs["H2"][1])-1+extra[1]+extra[0]]
             
 
             LC_GERM_TABLE = []
@@ -871,7 +871,7 @@ def makeHTML():
                     germ_lc[key] = highlightLetter(germ_lc[key], custom_indexDict, highlights=highlights, start=lc_start, end=lc_end)
                 else:
                     continue
-                print("Key is: "+key)
+                vPrint("Key is: "+key)
                 try:
                     count = germ_lc[key].count('<span style="background-color: #ff0000">')
                     LC_GERM_TABLE_UNSORTED.append([count, GermRow.format(Name=key.split("|")[1], Sequence=germ_lc[key], Count=count)])
