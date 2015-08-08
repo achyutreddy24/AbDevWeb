@@ -841,12 +841,12 @@ def makeHTML():
                 germ_hc_indexDict[index] = "#FF0000"
             
             main_lc_seq = germ_lc[germ_lc["Seq"]]
-            lc_start = [re.sub("\.","",main_lc_seq).index(CDRs["L1"][1]),re.sub("\.","",main_lc_seq).index(CDRs["L2"][1])]
+            lc_start = [re.sub("\.","",main_lc_seq).index(CDRs["L1"][1])+main_lc_seq[:re.sub("\.","",main_lc_seq).index(CDRs["L1"][1])].count("."),re.sub("\.","",main_lc_seq).index(CDRs["L2"][1])+main_lc_seq[:re.sub("\.","",main_lc_seq).index(CDRs["L2"][1])].count(".")]
             extra = [main_lc_seq[lc_start[0]:lc_start[0]+len(CDRs["L1"][1])].count("."),main_lc_seq[lc_start[1]:lc_start[1]+len(CDRs["L2"][1])].count(".")]
             lc_end = [lc_start[0]+len(CDRs["L1"][1])-1+extra[0],lc_start[1]+len(CDRs["L2"][1])-1+extra[1]]
 
             main_hc_seq = germ_hc[germ_hc["Seq"]]
-            hc_start = [re.sub("\.","",main_hc_seq).index(CDRs["H1"][1]),re.sub("\.","",main_hc_seq).index(CDRs["H2"][1])]
+            hc_start = [re.sub("\.","",main_hc_seq).index(CDRs["H1"][1])+main_hc_seq[:re.sub("\.","",main_hc_seq).index(CDRs["H1"][1])].count("."),re.sub("\.","",main_hc_seq).index(CDRs["H2"][1])+main_hc_seq[:re.sub("\.","",main_hc_seq).index(CDRs["H2"][1])].count(".")]
             extra = [main_hc_seq[hc_start[0]:hc_start[0]+len(CDRs["H1"][1])].count("."),main_hc_seq[hc_start[0]:hc_start[1]+len(CDRs["H2"][1])].count(".")]
             hc_end = [hc_start[0]+len(CDRs["H1"][1])-1+extra[0],hc_start[1]+len(CDRs["H2"][1])-1+extra[1]]
             
